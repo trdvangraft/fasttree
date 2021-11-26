@@ -1,7 +1,7 @@
 from itertools import product
 
 
-def count_v2(motifs, k):
+def get_profile(motifs, k):
     count = {nucleotide: [1]*k for nucleotide in "ACTG"}
     for i, j in product(range(len(motifs)), range(k)):
         count[motifs[i][j]][j] += 1
