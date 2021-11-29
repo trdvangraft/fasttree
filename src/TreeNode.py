@@ -14,11 +14,14 @@ class TreeNode:
         #TODO: merge profiles
 
     def addNode(self, n):
-        if(isinstance(n,TreeNode)):
-            #TODO: check if n is already in node
+        if(isinstance(n,TreeNode) and not n in self.children):
             self.children.append(n)
         else:
             print("WARNING: tried adding a non-TreeNode to tree")
+
+    def deleteNode(self,n):#TODO do we ever want this?
+        if(isinstance(n,TreeNode) and n in self.children):
+            self.children.remove(n)
 
     def mergeNodes(self, n1, n2):
         if(not isinstance(n1,TreeNode) or not isinstance(n2,TreeNode)):
