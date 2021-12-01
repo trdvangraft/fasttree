@@ -13,18 +13,6 @@ class TreeNode:
 
         self.profile = prof
 
-    def __int__(self,n1,n2):
-        if (not isinstance(n1, TreeNode) or not isinstance(n2, TreeNode)):
-            print("WARNING: tried merging 2 entities while not both are of type TreeNode")
-            return
-
-        #TODO: merge profiles
-        newProf = n1.profile.combine(n2.profile)
-        self.profile = newProf
-
-        self.addNode(n1)
-        self.addNode(n2)
-
     def addNode(self, n):
         if(isinstance(n,TreeNode) and not n in self.children):
             self.children.append(n)
