@@ -49,3 +49,4 @@ class ProfileTest(unittest.TestCase):
             "G": [0, 0, 1, 0, 0, 0],
             "T": [0, 0, 0, 0.5, 0, 0]
         }, nMerge.profile.get_frequency_profile())
+

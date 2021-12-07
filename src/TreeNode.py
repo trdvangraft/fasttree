@@ -1,12 +1,16 @@
 from src.profile import Profile
 
 class TreeNode:
+
+    m = 10#TODO: should be some global constant(how many distances to keep from each node)
+
+    parent = None
     children = []
-    distances = []
+    distances = []#tuple of type (distance,connectingNode)
     profile = None
 
     def __init__(self, prof):
-        print("made TreeNode")
+        # print("made TreeNode")
         if(not isinstance(prof,Profile)):
             print("WARNING: prof is not of type Profile")
             return
@@ -28,8 +32,21 @@ class TreeNode:
             print("WARNING: tried merging with a non-TreeNode object type")
             return
 
+        distances = self.distances
+        for n in n2.distances:
+            distances.append(n)
+
+        distances.sort(key=self.sorter)
+        distances = distances[:self.m]
+
+
         newNode = TreeNode(self.profile.combine(n2.profile))
+        newNode.distances = distances
         return newNode
 
     def getProfile(self):
         return self.profile#TODO should this be a copy or the actual one?
+
+    #"borrowd" from w3schools.com
+    def sorter(e):
+        return e['distance']
