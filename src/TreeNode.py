@@ -1,8 +1,9 @@
 from src.profile import Profile
+from operator import itemgetter
 
 class TreeNode:
 
-    m = 10#TODO: should be some global constant(how many distances to keep from each node)
+    m = 5#TODO: should be some global constant(how many distances to keep from each node)
 
     parent = None
     children = []
@@ -36,8 +37,8 @@ class TreeNode:
         for n in n2.distances:
             distances.append(n)
 
-        distances.sort(key=self.sorter)
-        distances = distances[:self.m]
+        distances = sorted(distances, key=itemgetter('distance'))
+        distances = distances[0:5]
 
 
         newNode = TreeNode(self.profile.combine(n2.profile))
@@ -46,7 +47,3 @@ class TreeNode:
 
     def getProfile(self):
         return self.profile#TODO should this be a copy or the actual one?
-
-    #"borrowd" from w3schools.com
-    def sorter(e):
-        return e['distance']
