@@ -1,15 +1,19 @@
 from operator import itemgetter
 
 from src.profile import Profile
+from operator import itemgetter
 from src.utils import *
 
-
 class TreeNode:
-    m = 5  # TODO: should be some global constant(how many distances to keep from each node)
+
+    m = 5#TODO: should be some global constant(how many distances to keep from each node)
 
     parent = None
     children = []
-    distances = []  # tuple of type (distance,connectingNode)
+    distances = []#tuple of type (distance,connectingNode)
+
+
+
     profile = None
     variance_correction = 0  # variance correction = 0 for leaves
     upDistance = 0  # updistance = 0 for leaves
@@ -20,7 +24,8 @@ class TreeNode:
 
     def __init__(self, prof):
         # print("made TreeNode")
-        if (not isinstance(prof, Profile)):
+
+        if(not isinstance(prof,Profile)):
             print("WARNING: prof is not of type Profile")
             return
 
@@ -53,7 +58,7 @@ class TreeNode:
         return newNode
 
     def getProfile(self):
-        return self.profile  # TODO should this be a copy or the actual one?
+        return self.profile#TODO should this be a copy or the actual one?
 
     def setUpDistance(self, node_i, node_j, weight=0.5):
         """
