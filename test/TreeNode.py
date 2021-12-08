@@ -163,3 +163,4 @@ class ProfileTest(unittest.TestCase):
         nMerge = na.mergeNodes(nb)
 
         npt.assert_array_equal(nMerge.distances, dCorrect)
+
