@@ -7,7 +7,9 @@ class Profile:
     def __init__(self, dna) -> None:
         self.motifs = dna if type(dna) == list else [dna]
         self.__count_profile = self.__calculate_count_profile()
+
         self.__weight_profile = [1] * len(self.motifs[0])
+
 
     def get_frequency_profile(self) -> dict:
         return {symbol: [count / len(self.motifs) for count in self.__count_profile[symbol]] for symbol in self.__count_profile}
@@ -20,7 +22,9 @@ class Profile:
         return Profile(new_motifs)
 
     def distance(self, profile: Profile):
+
         number_of_positions = len(self.motifs[0])
+
         denom = sum([self.__weight_profile[i] * profile.__weight_profile[i]
                     for i in range(number_of_positions)])
         top = sum([(1 - sum([a * b for a, b in zip(self.get_freq(i), profile.get_freq(i))])) *
