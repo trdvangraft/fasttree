@@ -34,7 +34,7 @@ class ProfileTest(unittest.TestCase):
         profile_b = Profile("ACGTAG")
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
-        self.assertEqual(1 / 2, internalNodesDistance(na, nb),
+        self.assertEqual(1 / 6, internalNodesDistance(na, nb),
                          "Update internal nodes distance wrong.")
 
     def test_set_joins_criterion(self):
