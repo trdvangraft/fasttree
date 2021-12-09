@@ -4,6 +4,8 @@ from src.profile import Profile
 from operator import itemgetter
 from src.utils import *
 
+from queue import PriorityQueue
+
 class TreeNode:
 
     m = 5#TODO: should be some global constant(how many distances to keep from each node)

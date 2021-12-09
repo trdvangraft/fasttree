@@ -5,7 +5,7 @@ from src.profile import Profile
 from src.TreeNode import TreeNode
 
 
-class ProfileTest(unittest.TestCase):
+class TreeTest(unittest.TestCase):
     def test_calculate_simple_motif(self):
         profile = Profile("A")
         treeNode = TreeNode(profile)
