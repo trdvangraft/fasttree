@@ -43,7 +43,7 @@ class ProfileTest(unittest.TestCase):
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
         root = na.mergeNodes(nb)
-        self.assertEqual(-1.5, SetJoinsCriterion(root, na, nb, 1),
+        self.assertEqual(-1.5, setJoinsCriterion(root, na, nb, 1),
                          "Set joins criterion wrong.")
 
     def test_set_out_distance(self):

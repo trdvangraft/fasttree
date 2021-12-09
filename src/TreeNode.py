@@ -86,3 +86,17 @@ class TreeNode:
         """
         self.variance_correction = weight * node_i.variance_correction + (
                     1 - weight) * node_j.variance_correction + weight * (1 - weight) * updateVariance(node_i, node_j)
+
+    def addDistance(self, node, distance):
+        self.distances.append({'distance': distance, 'Node': node})
+        #TODO: keep it space efficient by deleting when it goes over root(N)
+
+    def calcDistances(self):
+        for i in range(len(self.children)):
+            for j in range(i+1,len(self.children)):
+                na : TreeNode = self.children[i]
+                nb : TreeNode = self.children[j]
+
+                distance = setJoinsCriterion(self,na,nb)
+                na.addDistance(nb,distance)
+                nb.addDistance(na,distance)

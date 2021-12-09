@@ -57,7 +57,7 @@ def internalNodesDistance(node_i: TreeNode, node_j: TreeNode):
     return prof_dist - node_i.upDistance - node_j.upDistance
 
 
-def SetJoinsCriterion(root: TreeNode, node_i: TreeNode, node_j: TreeNode, active_num):
+def setJoinsCriterion(root: TreeNode, node_i: TreeNode, node_j: TreeNode, active_num):
     """
     Neighbor Joining Criterion: d_u(i,j) - r(i) - r(j)
     :param root:
@@ -66,7 +66,7 @@ def SetJoinsCriterion(root: TreeNode, node_i: TreeNode, node_j: TreeNode, active
     :param active_num:
     :return: criterion
     """
-    if node_i.parent is not None or node_i.parent is not None:
+    if node_i.parent is not None or node_i.parent is not None:#TODO: all nodes have a parent except the root, so this check seems strange
         return
     # assert node_i.nOutDistanceActive >= active_num
     # assert node_j.nOutDistanceActive >= active_num
