@@ -13,7 +13,7 @@ from src.profile import Profile
 from src.TreeNode import TreeNode
 
 
-class ProfileTest(unittest.TestCase):
+class UtilTest(unittest.TestCase):
     def test_update_variance1(self):
         profile_a = Profile("ACGTAA")
         profile_b = Profile("ACGTAG")

@@ -7,7 +7,6 @@
 @desc:
 """
 import logging
-
 from src.TreeNode import TreeNode
 
 logging.basicConfig(format='%(asctime)s-10s | %(levelname)-8s | %(message)s',
@@ -105,3 +104,4 @@ def setOutDistance(root: TreeNode, node: TreeNode, active_num):
     node.outDistance = out_dist / (active_num - 2)
     node.nOutDistanceActive = active_num
     return node.outDistance
+

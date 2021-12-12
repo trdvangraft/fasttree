@@ -1,11 +1,11 @@
-import profile
 import unittest
+
 import numpy.testing as npt
 from src.profile import Profile
 from src.TreeNode import TreeNode
 
 
-class ProfileTest(unittest.TestCase):
+class TreeNodeTest(unittest.TestCase):
     def test_calculate_simple_motif(self):
         profile = Profile("A")
         treeNode = TreeNode(profile)

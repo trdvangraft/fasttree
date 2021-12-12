@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from operator import itemgetter
+from typing import List
 
 from src.profile import Profile
 from operator import itemgetter
@@ -8,13 +11,6 @@ class TreeNode:
 
     m = 5#TODO: should be some global constant(how many distances to keep from each node)
 
-    parent = None
-    children = []
-    distances = []#tuple of type (distance,connectingNode)
-
-
-
-    profile = None
     variance_correction = 0  # variance correction = 0 for leaves
     upDistance = 0  # updistance = 0 for leaves
     nOutDistanceActive = -1
@@ -30,6 +26,9 @@ class TreeNode:
             return
 
         self.profile = prof
+        self.parent = None
+        self.children: List[TreeNode] = []
+        self.distances = [] #tuple of type (distance,connectingNode)
 
     def addNode(self, n):
         if (isinstance(n, TreeNode) and not n in self.children):
@@ -46,18 +45,17 @@ class TreeNode:
             print("WARNING: tried merging with a non-TreeNode object type")
             return
 
-        distances = self.distances
-        for n in n2.distances:
-            distances.append(n)
-
-        distances = sorted(distances, key=itemgetter('distance'))
-        distances = distances[0:5]
-
+        # New
         newNode = TreeNode(self.profile.combine(n2.profile))
-        newNode.distances = distances
+        newNode.distances = sorted(self.distances + n2.distances, key=itemgetter('distance'))[:5]
+
+        # add the merged nodes as children to the new node
+        newNode.addNode(self)
+        newNode.addNode(n2)
+
         return newNode
 
-    def getProfile(self):
+    def get_profile(self):
         return self.profile#TODO should this be a copy or the actual one?
 
     def setUpDistance(self, node_i, node_j, weight=0.5):

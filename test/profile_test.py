@@ -1,4 +1,3 @@
-import profile
 import unittest
 
 from src.profile import Profile

@@ -30,6 +30,11 @@ class Profile:
         top = sum([(1 - sum([a * b for a, b in zip(self.get_freq(i), profile.get_freq(i))])) *
                   (self.__weight_profile[i] * profile.__weight_profile[i]) for i in range(number_of_positions)])
         return (denom if denom > 0 else 0.01, top/denom if denom > 0 else 1), denom
+    
+    def log_distance(self, profile: Profile):
+        # TODO: calculate the log corrected distance, for now return just the distance
+        (weight, prof_dist), incorr_weight = self.distance(profile)
+        return prof_dist
 
     def get_freq(self, i):
         return [self.__count_profile[key][i] for key in self.__count_profile.keys()]
