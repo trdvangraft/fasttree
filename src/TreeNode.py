@@ -79,7 +79,8 @@ class TreeNode:
         #TODO: make an test to see if this works
         #remove nodes from old parent
         for n in nodes:
-            nParent.parent.children.remove(n)
+            if isinstance(nParent.parent, TreeNode):
+                nParent.parent.children.remove(n)
 
         return nParent
 
