@@ -76,6 +76,10 @@ class TreeNode:
         for n in nodes[1:]:
             nParent.distances = sorted(nParent.distances + n.distances, key=itemgetter('distance'))[:n.m]
 
+        #TODO: make an test to see if this works
+        #remove nodes from old parent
+        for n in nodes:
+            nParent.parent.children.remove(n)
 
         return nParent
 
