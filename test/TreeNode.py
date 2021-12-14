@@ -43,6 +43,7 @@ class TreeTest(unittest.TestCase):
 
         nMerge = TreeNode.mergeNodes([na,nc])
 
+        print(nMerge.profile.get_frequency_profile())
         self.assertDictEqual({
             "A": [1, 0, 0, 0, 1, 1],
             "C": [0, 1, 0, 0.5, 0, 0],

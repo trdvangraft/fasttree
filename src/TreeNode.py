@@ -59,7 +59,7 @@ class TreeNode:
         #mergeProfiles
         pParent = nodes[0].profile
         for p in nodes[1:]:
-            pParent.combine(p.profile)
+            pParent = pParent.combine(p.profile)
 
         #make new parent node with the original parent
         nParent = TreeNode(pParent)
