@@ -24,7 +24,7 @@ class TreeTest(unittest.TestCase):
         na = TreeNode(profile_a)
         nc = TreeNode(profile_b)
 
-        nMerge = na.mergeNodes(nc)
+        nMerge = TreeNode.mergeNodes([na,nc])
 
         self.assertDictEqual({
             "A": [1, 0, 0, 0, 1, 1],
@@ -41,7 +41,7 @@ class TreeTest(unittest.TestCase):
         na = TreeNode(profile_a)
         nc = TreeNode(profile_b)
 
-        nMerge = na.mergeNodes(nc)
+        nMerge = TreeNode.mergeNodes([na,nc])
 
         self.assertDictEqual({
             "A": [1, 0, 0, 0, 1, 1],
@@ -84,7 +84,7 @@ class TreeTest(unittest.TestCase):
             {'distance': 5, 'Node': None}
         ]
 
-        nMerge = na.mergeNodes(nb)
+        nMerge = TreeNode.mergeNodes([na,nb])
 
         npt.assert_array_equal(nMerge.distances,dCorrect)
 
@@ -122,7 +122,7 @@ class TreeTest(unittest.TestCase):
             {'distance': 5, 'Node': None}
         ]
 
-        nMerge = na.mergeNodes(nb)
+        nMerge = TreeNode.mergeNodes([na,nb])
 
         npt.assert_array_equal(nMerge.distances,dCorrect)
 
@@ -160,7 +160,8 @@ class TreeTest(unittest.TestCase):
             {'distance': 37, 'Node': None}
         ]
 
-        nMerge = na.mergeNodes(nb)
+        nMerge = TreeNode.mergeNodes([na,nb])
 
         npt.assert_array_equal(nMerge.distances, dCorrect)
 
+#TODO add test for mergers between more than 2 nodes
