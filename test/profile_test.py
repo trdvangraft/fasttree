@@ -52,3 +52,11 @@ class ProfileTest(unittest.TestCase):
             "G": [0, 0.5, 0.5, 0],
             "T": [0.5, 0, 0, 0.5]
         }, profile.get_frequency_profile())
+
+    def test_profile_init_without_gaps(self):
+        profile = Profile(["ACGT", "TGCA"])
+        self.assertListEqual([1.0, 1.0, 1.0, 1.0], profile.get_weights())
+
+    def test_profile_init_with_gaps(self):
+        profile = Profile(["AC-T", "TGCA"])
+        self.assertListEqual([1.0, 1.0, 0.5, 1.0], profile.get_weights())
