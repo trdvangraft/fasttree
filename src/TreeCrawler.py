@@ -11,7 +11,7 @@ class TreeCrawler:
         # print("made TreeNode")
 
         if(not isinstance(root,TreeNode)):
-            print("WARNING: prof is not of type Profile")
+            print("WARNING: root is not of type TreeNode")
             return
 
         self.root = root
