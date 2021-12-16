@@ -4,8 +4,6 @@ from src.profile import Profile
 from operator import itemgetter
 from src.utils import *
 
-from queue import PriorityQueue
-
 class TreeNode:
 
     m = 5#TODO: should be some global constant(how many distances to keep from each node)
@@ -127,3 +125,9 @@ class TreeNode:
                 distance = setJoinsCriterion(self,na,nb)
                 na.addDistance(nb,distance)
                 nb.addDistance(na,distance)
+
+    def getFirstDistance(self):#TODO Test
+        if len(self.distances) > 0:
+            return self.distances[0]
+
+        return 9999999999999999999999999
