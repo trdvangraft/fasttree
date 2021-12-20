@@ -2,13 +2,15 @@ from src.profile import Profile
 from operator import itemgetter
 from src.utils import *
 
-
 class TreeNode:
-    m = 5  # TODO: should be some global constant(how many distances to keep from each node)
+
+    m = 5#TODO: should be some global constant(how many distances to keep from each node)
 
     parent = None
     children = []
-    distances = []  # tuple of type (distance,connectingNode)
+    distances = []#tuple of type (distance,connectingNode)
+
+
 
     profile = None
     variance_correction = 0  # variance correction = 0 for leaves
@@ -21,7 +23,7 @@ class TreeNode:
     def __init__(self, prof):
         # print("made TreeNode")
 
-        if (not isinstance(prof, Profile)):
+        if(not isinstance(prof,Profile)):
             print("WARNING: prof is not of type Profile")
             return
 
@@ -39,39 +41,39 @@ class TreeNode:
 
     @staticmethod
     def mergeNodes(nodes):
-        # check if all are of type TreeNode
+        #check if all are of type TreeNode
         for n in nodes:
             if (not isinstance(n, TreeNode)):
                 print("WARNING: tried TreeNode merging with a non-TreeNode object type")
                 return
 
-        # check if all nodes have the same parent
+        #check if all nodes have the same parent
         for x in nodes:
             if not x.parent == nodes[0].parent:
                 print("WARNING: tried merging with a non-TreeNode object type")
 
-        # mergeProfiles
+        #mergeProfiles
         pParent = nodes[0].profile
         for p in nodes[1:]:
             pParent = pParent.combine(p.profile)
 
-        # make new parent node with the original parent
+        #make new parent node with the original parent
         nParent = TreeNode(pParent)
         nParent.parent = nodes[0].parent
 
-        # set all node parents to the new parent
-        # add all nodes to the new parent
+        #set all node parents to the new parent
+        #add all nodes to the new parent
         for n in nodes:
             n.parent = nParent
             nParent.children.append(n)
 
-        # merge distances
+        #merge distances
         nParent.distances = nodes[0].distances
         for n in nodes[1:]:
             nParent.distances = sorted(nParent.distances + n.distances, key=itemgetter('distance'))[:n.m]
 
-        # TODO: make an test to see if this works
-        # remove nodes from old parent
+        #TODO: make an test to see if this works
+        #remove nodes from old parent
         for n in nodes:
             if isinstance(nParent.parent, TreeNode):
                 nParent.parent.children.remove(n)
@@ -79,7 +81,7 @@ class TreeNode:
         return nParent
 
     def getProfile(self):
-        return self.profile  # TODO should this be a copy or the actual one?
+        return self.profile#TODO should this be a copy or the actual one?
 
     def setUpDistance(self, node_i, node_j, weight=0.5):
         """
@@ -106,23 +108,23 @@ class TreeNode:
         :return:
         """
         self.variance_correction = weight * node_i.variance_correction + (
-                1 - weight) * node_j.variance_correction + weight * (1 - weight) * updateVariance(node_i, node_j)
+                    1 - weight) * node_j.variance_correction + weight * (1 - weight) * updateVariance(node_i, node_j)
 
     def addDistance(self, node, distance):
         self.distances.append({'distance': distance, 'Node': node})
-        # TODO: keep it space efficient by deleting when it goes over root(N)
+        #TODO: keep it space efficient by deleting when it goes over root(N)
 
     def calcDistances(self):
         for i in range(len(self.children)):
-            for j in range(i + 1, len(self.children)):
-                na: TreeNode = self.children[i]
-                nb: TreeNode = self.children[j]
+            for j in range(i+1,len(self.children)):
+                na : TreeNode = self.children[i]
+                nb : TreeNode = self.children[j]
 
-                distance = setJoinsCriterion(self, na, nb)
-                na.addDistance(nb, distance)
-                nb.addDistance(na, distance)
+                distance = src.utils.setJoinsCriterion(self,na,nb)
+                na.addDistance(nb,distance)
+                nb.addDistance(na,distance)
 
-    def getFirstDistance(self):  # TODO Test
+    def getFirstDistance(self):#TODO Test
         if len(self.distances) > 0:
             return self.distances[0]
 

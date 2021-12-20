@@ -1,4 +1,4 @@
-import TreeNode
+from src.TreeNode import TreeNode
 import heapq
 
 class TreeCrawler:
