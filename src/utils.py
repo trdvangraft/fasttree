@@ -7,7 +7,6 @@
 @desc:
 """
 import logging
-
 from src.TreeNode import TreeNode
 
 logging.basicConfig(format='%(asctime)s-10s | %(levelname)-8s | %(message)s',
@@ -66,7 +65,7 @@ def setJoinsCriterion(root: TreeNode, node_i: TreeNode, node_j: TreeNode, active
     :param active_num:
     :return: criterion
     """
-    if node_i.parent is not None or node_i.parent is not None:
+    if node_i.parent is not None or node_i.parent is not None:#TODO: all nodes have a parent except the root, so this check seems strange
         return
     # assert node_i.nOutDistanceActive >= active_num
     # assert node_j.nOutDistanceActive >= active_num

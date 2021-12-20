@@ -26,31 +26,39 @@ class ProfileTest(unittest.TestCase):
         profile_b = Profile("ACGTAG")
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
+
         root = na.mergeNodes(nb)
         (weight_i, dist_i), incorr_weight_i = na.profile.distance(root.profile)
         self.assertEqual(1 / 12, dist_i)
+
 
     def test_update_weight(self):
         profile_a = Profile("ACGTAA")
         profile_b = Profile("ACGTAG")
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
+
         root = na.mergeNodes(nb)
         self.assertEqual(1/2, updateWeight(root, na, nb, 2), "Update weight wrong.")
+
 
     def test_internal_nodes_distance(self):
         profile_a = Profile("ACGTAA")
         profile_b = Profile("ACGTAG")
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
+
         self.assertEqual(1 / 6, internalNodesDistance(na, nb),
                          "Update internal nodes distance wrong.")
+
 
     def test_set_joins_criterion(self):
         profile_a = Profile("ACGTAA")
         profile_b = Profile("ACGTAG")
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
+
         root = na.mergeNodes(nb)
         self.assertEqual(1/6, setJoinsCriterion(root, na, nb, 2),
                          "Set joins criterion wrong.")
+

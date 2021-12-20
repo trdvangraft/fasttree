@@ -1,5 +1,3 @@
-from operator import itemgetter
-from itertools import product
 from src.profile import Profile
 from operator import itemgetter
 from src.utils import *
@@ -43,21 +41,46 @@ class TreeNode:
         if (isinstance(n, TreeNode) and n in self.children):
             self.children.remove(n)
 
-    def mergeNodes(self, n2):
-        if (not isinstance(n2, TreeNode)):
-            print("WARNING: tried merging with a non-TreeNode object type")
-            return
+    @staticmethod
+    def mergeNodes(nodes):
+        #check if all are of type TreeNode
+        for n in nodes:
+            if (not isinstance(n, TreeNode)):
+                print("WARNING: tried TreeNode merging with a non-TreeNode object type")
+                return
 
-        distances = self.distances
-        for n in n2.distances:
-            distances.append(n)
+        #check if all nodes have the same parent
+        for x in nodes:
+            if not x.parent == nodes[0].parent:
+                print("WARNING: tried merging with a non-TreeNode object type")
 
-        distances = sorted(distances, key=itemgetter('distance'))
-        distances = distances[0:5]
+        #mergeProfiles
+        pParent = nodes[0].profile
+        for p in nodes[1:]:
+            pParent = pParent.combine(p.profile)
 
-        newNode = TreeNode(self.profile.combine(n2.profile))
-        newNode.distances = distances
-        return newNode
+        #make new parent node with the original parent
+        nParent = TreeNode(pParent)
+        nParent.parent = nodes[0].parent
+
+        #set all node parents to the new parent
+        #add all nodes to the new parent
+        for n in nodes:
+            n.parent = nParent
+            nParent.children.append(n)
+
+        #merge distances
+        nParent.distances = nodes[0].distances
+        for n in nodes[1:]:
+            nParent.distances = sorted(nParent.distances + n.distances, key=itemgetter('distance'))[:n.m]
+
+        #TODO: make an test to see if this works
+        #remove nodes from old parent
+        for n in nodes:
+            if isinstance(nParent.parent, TreeNode):
+                nParent.parent.children.remove(n)
+
+        return nParent
 
     def getProfile(self):
         return self.profile#TODO should this be a copy or the actual one?
@@ -90,6 +113,7 @@ class TreeNode:
         self.variance_correction = weight * node_i.variance_correction + (
                     1 - weight) * node_j.variance_correction + weight * (1 - weight) * updateVariance(node_i, node_j)
 
+
     def __setSelfWeight(self):
         if self.profile:
             return sum(self.profile.get_weights()) / len(self.profile.get_weights())
@@ -102,4 +126,39 @@ class TreeNode:
         for i, j in product(range(n_children), range(n_children)):
             sum += self.children[i].profile.distance(self.children[j].profile)
         return sum
+
+
+    def addDistance(self, node, distance):
+        self.distances.append({'distance': distance, 'Node': node})
+        #TODO: keep it space efficient by deleting when it goes over root(N)
+
+    def calcDistances(self):
+        for i in range(len(self.children)):
+            for j in range(i+1,len(self.children)):
+                na : TreeNode = self.children[i]
+                nb : TreeNode = self.children[j]
+
+                distance = src.utils.setJoinsCriterion(self,na,nb)
+                na.addDistance(nb,distance)
+                nb.addDistance(na,distance)
+
+    def getFirstDistance(self):#TODO Test
+        if len(self.distances) > 0:
+            return self.distances[0]
+
+        return 9999999999999999999999999
+
+    def generateProfileFromChildren(self):
+        p = None
+
+        print("Profile before update == ")
+        print(self.profile.get_frequency_profile())
+        for c in self.children:
+            if p == None:
+                p = c.getProfile()
+            else:
+                p = p.combine(c.getProfile())
+        self.profile = p
+        print("Profile before update == ")
+        print(self.profile.get_frequency_profile())
 
