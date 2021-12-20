@@ -7,7 +7,6 @@
 @desc:
 """
 import logging
-
 import TreeNode
 
 logging.basicConfig(format='%(asctime)s-10s | %(levelname)-8s | %(message)s',
