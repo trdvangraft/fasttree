@@ -1,13 +1,6 @@
-from itertools import product
+# from itertools import product
 from src.TreeNode import TreeNode
 from src.profile import Profile
-
-def get_profile(motifs, k):
-    count = {nucleotide: [1]*k for nucleotide in "ACTG"}
-    for i, j in product(range(len(motifs)), range(k)):
-        count[motifs[i][j]][j] += 1
-    return count
-
 
 def read_atl(file_name):
     with open(file_name) as f:
