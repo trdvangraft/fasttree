@@ -21,36 +21,44 @@ class ProfileTest(unittest.TestCase):
         nb = TreeNode(profile_b)
         self.assertEqual(1 / 6, updateVariance(na, nb), "Update Variance wrong.")
 
+    def test_profile_distance(self):
+        profile_a = Profile("ACGTAA")
+        profile_b = Profile("ACGTAG")
+        na = TreeNode(profile_a)
+        nb = TreeNode(profile_b)
+
+        root = na.mergeNodes(nb)
+        (weight_i, dist_i), incorr_weight_i = na.profile.distance(root.profile)
+        self.assertEqual(1 / 12, dist_i)
+
+
     def test_update_weight(self):
         profile_a = Profile("ACGTAA")
         profile_b = Profile("ACGTAG")
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
-        root = TreeNode.mergeNodes([na,nb])
-        self.assertEqual(1 / 2, updateWeight(root, na, nb, 1), "Update weight wrong.")
+
+        root = na.mergeNodes(nb)
+        self.assertEqual(1/2, updateWeight(root, na, nb, 2), "Update weight wrong.")
+
 
     def test_internal_nodes_distance(self):
         profile_a = Profile("ACGTAA")
         profile_b = Profile("ACGTAG")
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
+
         self.assertEqual(1 / 6, internalNodesDistance(na, nb),
                          "Update internal nodes distance wrong.")
+
 
     def test_set_joins_criterion(self):
         profile_a = Profile("ACGTAA")
         profile_b = Profile("ACGTAG")
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
-        root = TreeNode.mergeNodes([na,nb])
-        self.assertEqual(-1.5, setJoinsCriterion(root, na, nb, 1),
+
+        root = na.mergeNodes(nb)
+        self.assertEqual(1/6, setJoinsCriterion(root, na, nb, 2),
                          "Set joins criterion wrong.")
 
-    def test_set_out_distance(self):
-        profile_a = Profile("ACGTAA")
-        profile_b = Profile("ACGTAG")
-        na = TreeNode(profile_a)
-        nb = TreeNode(profile_b)
-        root = TreeNode.mergeNodes([na,nb])
-        self.assertEqual(5 / 6, setOutDistance(root, na, 1), "Set out distance wrong.")
-        self.assertEqual(5 / 6, setOutDistance(root, nb, 1), "Set out distance wrong.")

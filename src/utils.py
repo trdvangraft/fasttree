@@ -35,14 +35,14 @@ def updateWeight(root: TreeNode, node_i: TreeNode, node_j: TreeNode, active_num)
     :param node_i:
     :param node_j:
     :param active_num:
-    :return: Lamda, the weight of i in ij
+    :return: Lambda, the weight of node i in node ij
     """
     # TODO: check whether outProfile will be implemented as the profile of root node
     (weight_i, dist_i), incorr_weight_i = node_i.profile.distance(root.profile)
     (weight_j, dist_j), incorr_weight_j = node_j.profile.distance(root.profile)
     top = (active_num - 2) * (node_i.variance_correction - node_j.variance_correction) + active_num * (dist_i - dist_j)
     bottom = 2 * (active_num - 2) * updateVariance(node_i, node_j)
-    return 0.5 + top / bottom
+    return 0.5 + (top / bottom if bottom > 0 else 0)
 
 
 def internalNodesDistance(node_i: TreeNode, node_j: TreeNode):
@@ -94,13 +94,13 @@ def setOutDistance(root: TreeNode, node: TreeNode, active_num):
     # TODO: check if root.upDistance represent the total up distance
     if node.selfWeight is not None:
         # with gaps
-        delta = (dist * weight * active_num - node.selfWeight * node.selfDistance) / (
-                weight * active_num - node.selfDistance)
+        delta = (dist * weight- node.selfWeight * node.selfDistance) / (
+                weight - node.selfDistance)
         out_dist = (active_num - 1) * delta - (active_num - 2) * node.upDistance - root.upDistance
     else:
         # without gaps
         out_dist = active_num * dist - node.selfDistance - (active_num - 2) * node.upDistance - root.upDistance
 
-    node.outDistance = out_dist / (active_num - 2)
+    node.outDistance = (out_dist / (active_num - 2) if active_num > 2 else 0)
     node.nOutDistanceActive = active_num
     return node.outDistance
