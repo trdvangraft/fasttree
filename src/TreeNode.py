@@ -31,6 +31,7 @@ class TreeNode:
 
     def addNode(self, n):
         if (isinstance(n, TreeNode) and not n in self.children):
+            n.parent = self
             self.children.append(n)
         else:
             print("WARNING: tried adding a non-TreeNode to tree")
@@ -40,7 +41,7 @@ class TreeNode:
             self.children.remove(n)
 
     @staticmethod
-    def mergeNodes(nodes):
+    def mergeNodes(nodes, cutoff):
         #check if all are of type TreeNode
         for n in nodes:
             if (not isinstance(n, TreeNode)):
@@ -48,9 +49,21 @@ class TreeNode:
                 return
 
         #check if all nodes have the same parent
-        for x in nodes:
-            if not x.parent == nodes[0].parent:
-                print("WARNING: tried merging with a non-TreeNode object type")
+        # for x in nodes:
+        #     if not x.parent.parent == None:
+        #         print("WARNING: Node that isn't directly under root is found")
+
+        toBeAdded = []
+
+        #get the node(s) to merge with
+        # for n in nodes:
+        #     for i in n.distances:
+        #         if(i["distance"]< cutoff):
+        #             toBeAdded.append(i["Node"])
+        #         else:
+        #             break#TODO: this only breaks the i loop right?
+
+        nodes = nodes + toBeAdded
 
         #mergeProfiles
         pParent = nodes[0].profile
@@ -120,13 +133,14 @@ class TreeNode:
                 na : TreeNode = self.children[i]
                 nb : TreeNode = self.children[j]
 
-                distance = src.utils.setJoinsCriterion(self,na,nb)
+                distance = setJoinsCriterion(self,na,nb,len(self.children))
+                print("typeof(distance)=="+str(type(distance)))
                 na.addDistance(nb,distance)
                 nb.addDistance(na,distance)
 
     def getFirstDistance(self):#TODO Test
         if len(self.distances) > 0:
-            return self.distances[0]
+            return self.distances[0]["distance"]
 
         return 9999999999999999999999999
 

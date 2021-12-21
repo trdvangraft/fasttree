@@ -26,7 +26,7 @@ class ProfileTest(unittest.TestCase):
         profile_b = Profile("ACGTAG")
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
-        root = TreeNode.mergeNodes([na,nb])
+        root = TreeNode.mergeNodes([na,nb],1000)
         self.assertEqual(1 / 2, updateWeight(root, na, nb, 1), "Update weight wrong.")
 
     def test_internal_nodes_distance(self):
@@ -42,7 +42,7 @@ class ProfileTest(unittest.TestCase):
         profile_b = Profile("ACGTAG")
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
-        root = TreeNode.mergeNodes([na,nb])
+        root = TreeNode.mergeNodes([na,nb],1000)
         self.assertEqual(-1.5, setJoinsCriterion(root, na, nb, 1),
                          "Set joins criterion wrong.")
 
@@ -51,6 +51,6 @@ class ProfileTest(unittest.TestCase):
         profile_b = Profile("ACGTAG")
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
-        root = TreeNode.mergeNodes([na,nb])
+        root = TreeNode.mergeNodes([na,nb],1000)
         self.assertEqual(5 / 6, setOutDistance(root, na, 1), "Set out distance wrong.")
         self.assertEqual(5 / 6, setOutDistance(root, nb, 1), "Set out distance wrong.")
