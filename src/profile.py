@@ -4,7 +4,8 @@ from itertools import product
 
 
 class Profile:
-    def __init__(self, dna) -> None:
+    def __init__(self, dna, name) -> None:
+        self.name = name
         self.motifs = dna if type(dna) == list else [dna]
         self.__count_profile, self.__weight_profile = self.__calculate_count_profile()
 
@@ -17,7 +18,8 @@ class Profile:
 
     def combine(self, profile: Profile) -> Profile:
         new_motifs = self.motifs + profile.motifs
-        return Profile(new_motifs)
+        new_name = "_".join([self.name, profile.name])
+        return Profile(new_motifs, new_name)
 
     def distance(self, profile: Profile):
 

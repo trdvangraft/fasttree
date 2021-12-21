@@ -1,13 +1,5 @@
-# encoding: utf-8
-"""
-@author: Xinqi
-@contact: lixinqi98@gmail.com
-@file: utils.py
-@time: 12/7/21
-@desc:
-"""
 import logging
-from src.TreeNode import TreeNode
+import src.TreeNode as TreeNode
 
 logging.basicConfig(format='%(asctime)s-10s | %(levelname)-8s | %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',

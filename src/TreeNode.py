@@ -1,18 +1,16 @@
 from src.profile import Profile
 from operator import itemgetter
+from itertools import product
 from src.utils import *
+
 
 class TreeNode:
 
     m = 5#TODO: should be some global constant(how many distances to keep from each node)
 
-    parent = None
-    children = []
-    distances = []#tuple of type (distance,connectingNode)
-
-
-
-    profile = None
+    # parent = None
+    # children = []
+    # distances = []#tuple of type (distance,connectingNode)
 
     def __init__(self, prof):
         # print("made TreeNode")
@@ -22,6 +20,11 @@ class TreeNode:
             return
 
         self.profile = prof
+        self.nodeName = prof.name
+
+        self.children = []
+        self.parent = None
+        self.distances = []
 
         self.variance_correction = 0  # variance correction = 0 for leaves
         self.upDistance = 0  # updistance = 0 for leaves
@@ -80,6 +83,12 @@ class TreeNode:
             if isinstance(nParent.parent, TreeNode):
                 nParent.parent.children.remove(n)
 
+        # update the self distance
+        nParent.__setSelfDistance()
+        # TODO: update the covariance correction with weight
+        # weight = updateWeight()
+        # nParent.setVarianceCorrection(nodes[0]. nodes[1])
+
         return nParent
 
     def getProfile(self):
@@ -124,8 +133,9 @@ class TreeNode:
         sum = 0
         n_children = len(self.children)
         for i, j in product(range(n_children), range(n_children)):
-            sum += self.children[i].profile.distance(self.children[j].profile)
-        return sum
+            (weight, dist), incorr_weight = self.children[i].profile.distance(self.children[j].profile)
+            sum += dist
+        self.selfDistance = sum
 
 
     def addDistance(self, node, distance):

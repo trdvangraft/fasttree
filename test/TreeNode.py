@@ -7,7 +7,7 @@ from src.TreeNode import TreeNode
 
 class TreeTest(unittest.TestCase):
     def test_calculate_simple_motif(self):
-        profile = Profile("A")
+        profile = Profile("A", "seqA")
         treeNode = TreeNode(profile)
         self.assertDictEqual({
             "A": [1],
@@ -17,8 +17,8 @@ class TreeTest(unittest.TestCase):
         }, treeNode.profile.get_frequency_profile())
 
     def test_simpleMerge(self):
-        profile_a = Profile("ACGTAA")
-        profile_b = Profile("ACGTAA")
+        profile_a = Profile("ACGTAA", "seqA")
+        profile_b = Profile("ACGTAA", "seqB")
 
 
         na = TreeNode(profile_a)
@@ -34,8 +34,8 @@ class TreeTest(unittest.TestCase):
         }, nMerge.profile.get_frequency_profile())
 
     def test_simpleMerge2(self):
-        profile_a = Profile("ACGTAA")
-        profile_b = Profile("ACGCAA")
+        profile_a = Profile("ACGTAA", "seqA")
+        profile_b = Profile("ACGCAA", "seqB")
 
 
         na = TreeNode(profile_a)
@@ -52,8 +52,8 @@ class TreeTest(unittest.TestCase):
         }, nMerge.profile.get_frequency_profile())
 
     def test_mergeDistances1(self):
-        profile_a = Profile("ACGTAA")
-        profile_b = Profile("ACGCAA")
+        profile_a = Profile("ACGTAA", "seqA")
+        profile_b = Profile("ACGCAA", "seqB")
 
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
@@ -90,8 +90,8 @@ class TreeTest(unittest.TestCase):
         npt.assert_array_equal(nMerge.distances,dCorrect)
 
     def test_mergeDistances2(self):
-        profile_a = Profile("ACGTAA")
-        profile_b = Profile("ACGCAA")
+        profile_a = Profile("ACGTAA", "seqA")
+        profile_b = Profile("ACGCAA", "seqB")
 
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
@@ -128,8 +128,8 @@ class TreeTest(unittest.TestCase):
         npt.assert_array_equal(nMerge.distances,dCorrect)
 
     def test_mergeDistances3(self):
-        profile_a = Profile("ACGTAA")
-        profile_b = Profile("ACGCAA")
+        profile_a = Profile("ACGTAA", "seqA")
+        profile_b = Profile("ACGCAA", "seqB")
 
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)

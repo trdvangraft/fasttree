@@ -12,13 +12,13 @@ def read_atl(file_name):
 if __name__ == "__main__":
     sequences = read_atl("data/fasttree-input.aln")
 
-    root : TreeNode = TreeNode(Profile("A"))
+    root : TreeNode = TreeNode(Profile("A", "root"))
 
     print(sequences)
     for n in sequences:
         # print(n)
         # print(sequences[n])
-        node = TreeNode(Profile(sequences[n]))
+        node = TreeNode(Profile(sequences[n], n))
         root.addNode(node)
 
     root.generateProfileFromChildren()
