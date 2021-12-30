@@ -31,11 +31,11 @@ class BootStrap:
         for i in range(self.nBootStraps):
             resample_motifs_c = self.resampleColumns(profile_c.motifs)
             profile_c.motifs = resample_motifs_c
-            support_1 = profile_a.distance(profile_c) + profile_b.distance(profile_d) - \
-                        profile_a.distance(profile_b) - profile_c.distance(profile_d)
+            support_1 = profile_a.distance(profile_c)[0][1] + profile_b.distance(profile_d)[0][1] - \
+                        profile_a.distance(profile_b)[0][1] - profile_c.distance(profile_d)[0][1]
 
-            support_2 = profile_a.distance(profile_d) + profile_b.distance(profile_c) - \
-                        profile_a.distance(profile_b) - profile_c.distance(profile_d)
+            support_2 = profile_a.distance(profile_d)[0][1] + profile_b.distance(profile_c)[0][1] - \
+                        profile_a.distance(profile_b)[0][1] - profile_c.distance(profile_d)[0][1]
 
             if support_1 > 0 and support_2 > 0:
                 nSupport += 1
@@ -49,11 +49,11 @@ class BootStrap:
         """
         resample_sequences = []
         for sequence in sequences:
-            re_sequence = copy.deepcopy(sequence)
+            re_sequence = list(copy.deepcopy(sequence))
             for idx in range(len(sequence)):
                 resample_pos = random.randint(0, len(sequence) - 1)
                 re_sequence[idx] = sequence[resample_pos]
-            resample_sequences.append(re_sequence)
+            resample_sequences.append("".join(re_sequence))
         return resample_sequences
 
     def createProfiles(self):
