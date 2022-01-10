@@ -37,6 +37,7 @@ class TreeCrawler:
             i = 1
             while i<len(shortesDistances) and shortesDistances[0]["distance"] + self.epsilon > shortesDistances[i]["distance"]:
                 merger.append(shortesDistances[i]["Node"])
+                shortesDistances.remove(shortesDistances[i])
                 i+= 1
 
 

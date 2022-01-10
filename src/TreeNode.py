@@ -134,7 +134,7 @@ class TreeNode:
                 nb : TreeNode = self.children[j]
 
                 distance = setJoinsCriterion(self,na,nb,len(self.children))
-                print("typeof(distance)=="+str(type(distance)))
+                # print("typeof(distance)=="+str(type(distance)))
                 na.addDistance(nb,distance)
                 nb.addDistance(na,distance)
 
