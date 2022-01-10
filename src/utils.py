@@ -1,11 +1,3 @@
-# encoding: utf-8
-"""
-@author: Xinqi
-@contact: lixinqi98@gmail.com
-@file: utils.py
-@time: 12/7/21
-@desc:
-"""
 import logging
 import src.TreeNode as TreeNode
 
@@ -65,8 +57,8 @@ def setJoinsCriterion(root: TreeNode, node_i: TreeNode, node_j: TreeNode, active
     :param active_num:
     :return: criterion
     """
-    if node_i.parent is not None or node_i.parent is not None:#TODO: all nodes have a parent except the root, so this check seems strange
-        return
+    # if node_i.parent is not None or node_i.parent is not None:#TODO: all nodes have a parent except the root, so this check seems strange
+    #     return
     # assert node_i.nOutDistanceActive >= active_num
     # assert node_j.nOutDistanceActive >= active_num
     node_dist = internalNodesDistance(node_i, node_j)
