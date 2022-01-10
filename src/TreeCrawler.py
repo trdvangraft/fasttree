@@ -22,7 +22,7 @@ class TreeCrawler:
         shortesDistances = sorted([{"distance": n.getFirstDistance(), "Node":n} for n in self.root.children], key=itemgetter('distance'), reverse=True)
 
         # well our queue is not empty we can update the tree! 
-        while len(shortesDistances) > 1:
+        while len(self.root.children) > 1:
             print("index=="+str(index))
             index += 1
 

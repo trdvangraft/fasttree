@@ -50,19 +50,24 @@ class TreeNode:
                 return
 
         #check if all nodes have the same parent
+        for i in range(len(nodes)):
+            if (x := nodes[i]) and not x.parent.parent == None:
+                print("WARNING: Node that isn't directly under root is found 1")
+                while not x.parent.parent == None:
+                    x = x.parent
+                nodes[i] = x
+
+
         for x in nodes:
             if not x.parent.parent == None:
-                print("WARNING: Node that isn't directly under root is found")
-
-        toBeAdded = []
+                print("WARNING: Node that isn't directly under root is found 2")     
 
         #get the node(s) to merge with
-        for n in nodes:
-            if not n.hasLowDistanceTo(nodes[0],cutoff):
-                nodes.remove(n)
+        # for n in nodes:
+        #     if not n.hasLowDistanceTo(nodes[0],cutoff):
+        #         nodes.remove(n)
 
-
-        nodes = nodes
+        root = nodes[0].parent
 
         #mergeProfiles
         pParent = nodes[0].profile
@@ -71,7 +76,8 @@ class TreeNode:
 
         #make new parent node with the original parent
         nParent = TreeNode(pParent)
-        nParent.parent = nodes[0].parent
+        nParent.parent = root
+        root.children.append(nParent)
 
         #set all node parents to the new parent
         #add all nodes to the new parent
@@ -87,8 +93,7 @@ class TreeNode:
         #TODO: make an test to see if this works
         #remove nodes from old parent
         for n in nodes:
-            if isinstance(nParent.parent, TreeNode):
-                nParent.parent.children.remove(n)
+            root.children.remove(n)
 
         # update the self distance
         nParent.__setSelfDistance()

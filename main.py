@@ -22,7 +22,7 @@ if __name__ == "__main__":
         root.addNode(node)
 
     root.generateProfileFromChildren()
-    print(root.profile.get_frequency_profile())
+    # print(root.profile.get_frequency_profile())
     root.calcDistances()
 
     crawler = TreeCrawler(root)
