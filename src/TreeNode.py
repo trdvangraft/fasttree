@@ -1,6 +1,10 @@
+from __future__ import annotations
+
+from typing import List
 from src.profile import Profile
 from operator import itemgetter
 from itertools import product
+from functools import reduce
 from src.utils import *
 
 
@@ -42,13 +46,7 @@ class TreeNode:
             self.children.remove(n)
 
     @staticmethod
-    def mergeNodes(nodes, cutoff):
-        #check if all are of type TreeNode
-        for n in nodes:
-            if (not isinstance(n, TreeNode)):
-                print("WARNING: tried TreeNode merging with a non-TreeNode object type")
-                return
-
+    def mergeNodes(nodes: List[TreeNode], root: TreeNode):
         #check if all nodes have the same parent
         for i in range(len(nodes)):
             if (x := nodes[i]) and not x.parent.parent == None:
@@ -57,25 +55,8 @@ class TreeNode:
                     x = x.parent
                 nodes[i] = x
 
-
-        for x in nodes:
-            if not x.parent.parent == None:
-                print("WARNING: Node that isn't directly under root is found 2")     
-
-        #get the node(s) to merge with
-        # for n in nodes:
-        #     if not n.hasLowDistanceTo(nodes[0],cutoff):
-        #         nodes.remove(n)
-
-        root = nodes[0].parent
-
-        #mergeProfiles
-        pParent = nodes[0].profile
-        for p in nodes[1:]:
-            pParent = pParent.combine(p.profile)
-
         #make new parent node with the original parent
-        nParent = TreeNode(pParent)
+        nParent = TreeNode(reduce(lambda acc, p: acc.combine(p.profile), nodes[1:], nodes[0].profile))
         nParent.parent = root
         root.children.append(nParent)
 

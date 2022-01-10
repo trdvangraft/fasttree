@@ -42,6 +42,6 @@ class TreeCrawler:
             
 
             print("len(merger)=="+str(len(merger)))
-            nParent = TreeNode.mergeNodes(merger, cutoff=cutoff)
+            nParent = TreeNode.mergeNodes(merger, self.root)
             shortesDistances.append({"distance": nParent.getFirstDistance(),"Node":nParent})
             shortesDistances = sorted(shortesDistances, key=itemgetter('distance'), reverse=True)
