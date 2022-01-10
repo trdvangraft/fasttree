@@ -18,7 +18,7 @@ class utilTest(unittest.TestCase):
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
 
-        root = TreeNode.mergeNodes([na,nb])
+        root = TreeNode.mergeNodes([na, nb])
         (weight_i, dist_i), incorr_weight_i = na.profile.distance(root.profile)
         self.assertEqual(1 / 12, dist_i)
 

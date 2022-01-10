@@ -153,17 +153,12 @@ class TreeNode:
 
     def generateProfileFromChildren(self):
         p = None
-
-        print("Profile before update == ")
-        print(self.profile.get_frequency_profile())
         for c in self.children:
             if p == None:
                 p = c.getProfile()
             else:
                 p = p.combine(c.getProfile())
         self.profile = p
-        print("Profile before update == ")
-        print(self.profile.get_frequency_profile())
 
     def hasLowDistanceTo(self, target : TreeNode, limit:float):
         for d in self.distances:
