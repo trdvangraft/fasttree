@@ -8,10 +8,6 @@ class TreeNode:
 
     m = 5#TODO: should be some global constant(how many distances to keep from each node)
 
-    # parent = None
-    # children = []
-    # distances = []#tuple of type (distance,connectingNode)
-
     def __init__(self, prof):
         # print("made TreeNode")
 
@@ -36,6 +32,7 @@ class TreeNode:
 
     def addNode(self, n):
         if (isinstance(n, TreeNode) and not n in self.children):
+            n.parent = self
             self.children.append(n)
         else:
             print("WARNING: tried adding a non-TreeNode to tree")
@@ -45,7 +42,7 @@ class TreeNode:
             self.children.remove(n)
 
     @staticmethod
-    def mergeNodes(nodes):
+    def mergeNodes(nodes, cutoff):
         #check if all are of type TreeNode
         for n in nodes:
             if (not isinstance(n, TreeNode)):
@@ -53,9 +50,21 @@ class TreeNode:
                 return
 
         #check if all nodes have the same parent
-        for x in nodes:
-            if not x.parent == nodes[0].parent:
-                print("WARNING: tried merging with a non-TreeNode object type")
+        # for x in nodes:
+        #     if not x.parent.parent == None:
+        #         print("WARNING: Node that isn't directly under root is found")
+
+        toBeAdded = []
+
+        #get the node(s) to merge with
+        # for n in nodes:
+        #     for i in n.distances:
+        #         if(i["distance"]< cutoff):
+        #             toBeAdded.append(i["Node"])
+        #         else:
+        #             break#TODO: this only breaks the i loop right?
+
+        nodes = nodes + toBeAdded
 
         #mergeProfiles
         pParent = nodes[0].profile
@@ -98,25 +107,24 @@ class TreeNode:
         """
         update the upDistance of node_ij based on node_i and node_j
         if not weighted, u(ij) = (ProfileDistance(i, j)) / 2
-        Weighted Join, u(ij) = weight(u(i)+d(i,ij)) + (1-weight)(u(j)+d(j,ij))
+        Weighted Join, u(ij) = Lamda(u(i)+d(i,ij)) + (1-Lamda)(u(j)+d(j,ij))
         :param node_i:
         :param node_j:
+        :param node_ij:
         :param weight: if not weighted, default weight is 1/2
         :return:
         """
-        node_dist_ij = internalNodesDistance(node_i, node_j)
-        dist_i_ij = (node_dist_ij + node_i.upDistance - node_j.upDistance) / 2
-        dist_j_ij = (node_dist_ij + node_j.upDistance - node_i.upDistance) / 2
+        (weight_i, dist_i_ij), incorr_weight_i = node_i.profile.distance(self.profile)
+        (weight_j, dist_j_ij), incorr_weight_j = node_j.profile.distance(self.profile)
 
         self.upDistance = weight * (node_i.upDistance + dist_i_ij) + (1 - weight) * (node_j.upDistance + dist_j_ij)
 
-    def setVarianceCorrection(self, node_i, node_j, weight=0.5):
+    def setVarianceCorrection(self, node_i, node_j, weight):
         """
-        update the variance correction of node_ij based on node_i and node_j
-        v(ij) = weight*v(i)+(1-weight)*v(j)+weight*(1-weight)*V(i,j)
+        v(ij) = Lamda*v(i)+(1-Lamda)*v(j)+Lamda*(1-Lamda)*V(i,j)
         :param node_i:
         :param node_j:
-        :param weight: if not weighted, default weight is 1/2
+        :param weight:
         :return:
         """
         self.variance_correction = weight * node_i.variance_correction + (
@@ -148,13 +156,14 @@ class TreeNode:
                 na : TreeNode = self.children[i]
                 nb : TreeNode = self.children[j]
 
-                distance = src.utils.setJoinsCriterion(self,na,nb)
+                distance = setJoinsCriterion(self,na,nb,len(self.children))
+                # print("typeof(distance)=="+str(type(distance)))
                 na.addDistance(nb,distance)
                 nb.addDistance(na,distance)
 
     def getFirstDistance(self):#TODO Test
         if len(self.distances) > 0:
-            return self.distances[0]
+            return self.distances[0]["distance"]
 
         return 9999999999999999999999999
 
@@ -171,4 +180,3 @@ class TreeNode:
         self.profile = p
         print("Profile before update == ")
         print(self.profile.get_frequency_profile())
-

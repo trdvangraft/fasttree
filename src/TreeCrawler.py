@@ -1,9 +1,9 @@
 from src.TreeNode import TreeNode
-import heapq
+from operator import itemgetter
 
 class TreeCrawler:
     #TODO: Test
-    epsilon = 0.0001
+    epsilon = 0
 
 
     root = None
@@ -19,20 +19,29 @@ class TreeCrawler:
 
     def startMerging(self):
         shortesDistances = []
+        index = 0
 
         for n in self.root.children:
-            heapq.heappush(shortesDistances,(n.getFirstDistance(),n))
+            shortesDistances.append({"distance":n.getFirstDistance(),"Node":n})
 
         while len(shortesDistances) > 1:
+            print(index)
+            index += 1
+
+            print("len(shortestDistances)=="+str(len(shortesDistances)))
+
             merger = []
-            (d,n) = heapq.heappop(shortesDistances)
-            merger.append(n)
+            cutoff = shortesDistances[0]["distance"] + self.epsilon
+            merger.append(shortesDistances[0]["Node"])
 
-            next = heapq.heappop(shortesDistances)
+            i = 1
+            while i<len(shortesDistances) and shortesDistances[0]["distance"] + self.epsilon > shortesDistances[i]["distance"]:
+                merger.append(shortesDistances[i]["Node"])
+                shortesDistances.remove(shortesDistances[i])
+                i+= 1
 
-            while d + self.epsilon > next[0]:
-                merger.append(next[1])
-                next = heapq.heappop(shortesDistances)
 
-            nParent = TreeNode.mergeNodes(merger)
-            heapq.heappush(shortesDistances,(nParent.getFirstDistance(),nParent))
+            print("len(merger)=="+str(len(merger)))
+            nParent = TreeNode.mergeNodes(merger,cutoff=cutoff)
+            shortesDistances.append({"distance": nParent.getFirstDistance(),"Node":nParent})
+            shortesDistances = sorted(shortesDistances, key=itemgetter('distance'))

@@ -27,16 +27,14 @@ class utilTest(unittest.TestCase):
         profile_b = Profile("ACGTAG", "seqB")
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
-
-        root = TreeNode.mergeNodes([na,nb])
-        self.assertEqual(1 / 2, updateWeight(root, na, nb, 2), "Update weight wrong.")
+        root = TreeNode.mergeNodes([na,nb],1000)
+        self.assertEqual(1 / 2, updateWeight(root, na, nb, 1), "Update weight wrong.")
 
     def test_internal_nodes_distance(self):
         profile_a = Profile("ACGTAA", "seqA")
         profile_b = Profile("ACGTAG", "seqB")
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
-
         self.assertEqual(1 / 6, internalNodesDistance(na, nb),
                          "Update internal nodes distance wrong.")
 
@@ -45,9 +43,15 @@ class utilTest(unittest.TestCase):
         profile_b = Profile("ACGTAG", "seqB")
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
-
-        root = TreeNode.mergeNodes([na,nb])
-
-        nc = TreeNode(Profile("ACGTTT", "seqC"))
-        self.assertEqual(1 / 3, setJoinsCriterion(root, root, nc, 2),
+        root = TreeNode.mergeNodes([na,nb],1000)
+        self.assertEqual(-1.5, setJoinsCriterion(root, na, nb, 1),
                          "Set joins criterion wrong.")
+
+    def test_set_out_distance(self):
+        profile_a = Profile("ACGTAA")
+        profile_b = Profile("ACGTAG")
+        na = TreeNode(profile_a)
+        nb = TreeNode(profile_b)
+        root = TreeNode.mergeNodes([na,nb],1000)
+        self.assertEqual(5 / 6, setOutDistance(root, na, 1), "Set out distance wrong.")
+        self.assertEqual(5 / 6, setOutDistance(root, nb, 1), "Set out distance wrong.")
