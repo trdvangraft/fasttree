@@ -57,12 +57,12 @@ class TreeNode:
         toBeAdded = []
 
         #get the node(s) to merge with
-        # for n in nodes:
-        #     for i in n.distances:
-        #         if(i["distance"]< cutoff):
-        #             toBeAdded.append(i["Node"])
-        #         else:
-        #             break#TODO: this only breaks the i loop right?
+        for n in nodes:
+            for i in n.distances:
+                if(i["distance"] < cutoff):
+                    toBeAdded.append(i["Node"])
+                else:
+                    break#TODO: this only breaks the i loop right?
 
         nodes = nodes + toBeAdded
 
