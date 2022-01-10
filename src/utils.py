@@ -63,7 +63,7 @@ def setJoinsCriterion(root: TreeNode, node_i: TreeNode, node_j: TreeNode, active
     # assert node_j.nOutDistanceActive >= active_num
     node_dist = internalNodesDistance(node_i, node_j)
     outdist_i = setOutDistance(root, node_i, active_num)
-    outdist_j = setOutDistance(root, node_i, active_num)
+    outdist_j = setOutDistance(root, node_j, active_num)
     return node_dist - outdist_i - outdist_j
 
 
@@ -93,6 +93,6 @@ def setOutDistance(root: TreeNode, node: TreeNode, active_num):
         # without gaps
         out_dist = active_num * dist - node.selfDistance - (active_num - 2) * node.upDistance - root.upDistance
 
-    node.outDistance = out_dist / (active_num - 2)
+    node.outDistance = (out_dist / (active_num - 2) if active_num > 2 else 0)
     node.nOutDistanceActive = active_num
     return node.outDistance

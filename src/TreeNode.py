@@ -143,7 +143,7 @@ class TreeNode:
         for i, j in product(range(n_children), range(n_children)):
             (weight, dist), incorr_weight = self.children[i].profile.distance(self.children[j].profile)
             sum += dist
-        self.selfDistance = sum
+        return sum
 
 
     def addDistance(self, node, distance):

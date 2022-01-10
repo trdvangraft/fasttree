@@ -36,6 +36,9 @@ class Profile:
     def get_freq(self, i):
         return [self.__count_profile[key][i] for key in self.__count_profile.keys()]
 
+    def get_weights(self):
+        return self.__weight_profile
+
     def __calculate_count_profile(self) -> dict:
         k = len(self.motifs[0])
         profile = {nucleotide: [0]*k for nucleotide in "ACTG"}
