@@ -28,14 +28,14 @@ class TreeCrawler:
 
             print("len(shortestDistances)=="+str(len(shortesDistances)))
 
-            merger = []
             cutoff = shortesDistances[0]["distance"] + self.epsilon
-            merger.append(shortesDistances[0]["Node"])
+            merger = [shortesDistances[0]["Node"]]
 
             i = 1
             while i < len(shortesDistances) and cutoff > shortesDistances[i]["distance"]:
-                merger.append(shortesDistances[i]["Node"])
-                shortesDistances.remove(shortesDistances[i])
+                if shortesDistances[i]["Node"].hasLowDistanceTo(merger[0],cutoff):
+                    merger.append(shortesDistances[i]["Node"])
+                    shortesDistances.remove(shortesDistances[i])
                 # cutoff = merger[-1].getFirstDistance() + self.epsilon
                 i += 1
 

@@ -180,3 +180,10 @@ class TreeNode:
         self.profile = p
         print("Profile before update == ")
         print(self.profile.get_frequency_profile())
+
+    def hasLowDistanceTo(self, target : TreeNode, limit:float):
+        for d in self.distances:
+            if d["distance"] <= limit and d["Node"] == target:
+                return True
+
+        return False
