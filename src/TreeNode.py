@@ -50,21 +50,19 @@ class TreeNode:
                 return
 
         #check if all nodes have the same parent
-        # for x in nodes:
-        #     if not x.parent.parent == None:
-        #         print("WARNING: Node that isn't directly under root is found")
+        for x in nodes:
+            if not x.parent.parent == None:
+                print("WARNING: Node that isn't directly under root is found")
 
         toBeAdded = []
 
         #get the node(s) to merge with
         for n in nodes:
-            for i in n.distances:
-                if(i["distance"] < cutoff):
-                    toBeAdded.append(i["Node"])
-                else:
-                    break#TODO: this only breaks the i loop right?
+            if not n.hasLowDistanceTo(nodes[0],cutoff):
+                nodes.remove(n)
 
-        nodes = nodes + toBeAdded
+
+        nodes = nodes
 
         #mergeProfiles
         pParent = nodes[0].profile

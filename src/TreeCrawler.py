@@ -23,7 +23,7 @@ class TreeCrawler:
 
         # well our queue is not empty we can update the tree! 
         while len(shortesDistances) > 1:
-            print(index)
+            print("index=="+str(index))
             index += 1
 
             print("len(shortestDistances)=="+str(len(shortesDistances)))
