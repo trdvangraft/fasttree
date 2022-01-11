@@ -27,14 +27,14 @@ def updateWeight(root: TreeNode, node_i: TreeNode, node_j: TreeNode, active_num)
     :param node_i:
     :param node_j:
     :param active_num:
-    :return: Lambda, the weight of node i in node ij
+    :return: Lamda, the weight of i in ij
     """
     # TODO: check whether outProfile will be implemented as the profile of root node
     (weight_i, dist_i), incorr_weight_i = node_i.profile.distance(root.profile)
     (weight_j, dist_j), incorr_weight_j = node_j.profile.distance(root.profile)
     top = (active_num - 2) * (node_i.variance_correction - node_j.variance_correction) + active_num * (dist_i - dist_j)
     bottom = 2 * (active_num - 2) * updateVariance(node_i, node_j)
-    return 0.5 + (top / bottom if bottom > 0 else 0)
+    return 0.5 + top / bottom
 
 
 def internalNodesDistance(node_i: TreeNode, node_j: TreeNode):
@@ -57,13 +57,13 @@ def setJoinsCriterion(root: TreeNode, node_i: TreeNode, node_j: TreeNode, active
     :param active_num:
     :return: criterion
     """
-#     if node_i.parent is not None or node_i.parent is not None:#TODO: all nodes have a parent except the root, so this check seems strange
-#         return
+    #     if node_i.parent is not None or node_i.parent is not None:#TODO: all nodes have a parent except the root, so this check seems strange
+    #         return
     # assert node_i.nOutDistanceActive >= active_num
     # assert node_j.nOutDistanceActive >= active_num
     node_dist = internalNodesDistance(node_i, node_j)
     outdist_i = setOutDistance(root, node_i, active_num)
-    outdist_j = setOutDistance(root, node_i, active_num)
+    outdist_j = setOutDistance(root, node_j, active_num)
     return node_dist - outdist_i - outdist_j
 
 
@@ -86,8 +86,8 @@ def setOutDistance(root: TreeNode, node: TreeNode, active_num):
     # TODO: check if root.upDistance represent the total up distance
     if node.selfWeight is not None:
         # with gaps
-        delta = (dist * weight- node.selfWeight * node.selfDistance) / (
-                weight - node.selfDistance)
+        delta = (dist * weight * active_num - node.selfWeight * node.selfDistance) / (
+                weight * active_num - node.selfDistance)
         out_dist = (active_num - 1) * delta - (active_num - 2) * node.upDistance - root.upDistance
     else:
         # without gaps

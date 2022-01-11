@@ -1,16 +1,16 @@
+from __future__ import annotations
+
+from typing import List
 from src.profile import Profile
 from operator import itemgetter
 from itertools import product
+from functools import reduce
 from src.utils import *
 
 
 class TreeNode:
 
     m = 5#TODO: should be some global constant(how many distances to keep from each node)
-
-    # parent = None
-    # children = []
-    # distances = []#tuple of type (distance,connectingNode)
 
     def __init__(self, prof):
         # print("made TreeNode")
@@ -36,6 +36,7 @@ class TreeNode:
 
     def addNode(self, n):
         if (isinstance(n, TreeNode) and not n in self.children):
+            n.parent = self
             self.children.append(n)
         else:
             print("WARNING: tried adding a non-TreeNode to tree")
@@ -45,26 +46,19 @@ class TreeNode:
             self.children.remove(n)
 
     @staticmethod
-    def mergeNodes(nodes):
-        #check if all are of type TreeNode
-        for n in nodes:
-            if (not isinstance(n, TreeNode)):
-                print("WARNING: tried TreeNode merging with a non-TreeNode object type")
-                return
-
+    def mergeNodes(nodes: List[TreeNode], root: TreeNode):
         #check if all nodes have the same parent
-        for x in nodes:
-            if not x.parent == nodes[0].parent:
-                print("WARNING: tried merging with a non-TreeNode object type")
-
-        #mergeProfiles
-        pParent = nodes[0].profile
-        for p in nodes[1:]:
-            pParent = pParent.combine(p.profile)
+        for i in range(len(nodes)):
+            if (x := nodes[i]) and not x.parent.parent == None:
+                print("WARNING: Node that isn't directly under root is found 1")
+                while not x.parent.parent == None:
+                    x = x.parent
+                nodes[i] = x
 
         #make new parent node with the original parent
-        nParent = TreeNode(pParent)
-        nParent.parent = nodes[0].parent
+        nParent = TreeNode(reduce(lambda acc, p: acc.combine(p.profile), nodes[1:], nodes[0].profile))
+        nParent.parent = root
+        root.children.append(nParent)
 
         #set all node parents to the new parent
         #add all nodes to the new parent
@@ -80,8 +74,7 @@ class TreeNode:
         #TODO: make an test to see if this works
         #remove nodes from old parent
         for n in nodes:
-            if isinstance(nParent.parent, TreeNode):
-                nParent.parent.children.remove(n)
+            root.children.remove(n)
 
         # update the self distance
         nParent.__setSelfDistance()
@@ -98,25 +91,24 @@ class TreeNode:
         """
         update the upDistance of node_ij based on node_i and node_j
         if not weighted, u(ij) = (ProfileDistance(i, j)) / 2
-        Weighted Join, u(ij) = weight(u(i)+d(i,ij)) + (1-weight)(u(j)+d(j,ij))
+        Weighted Join, u(ij) = Lamda(u(i)+d(i,ij)) + (1-Lamda)(u(j)+d(j,ij))
         :param node_i:
         :param node_j:
+        :param node_ij:
         :param weight: if not weighted, default weight is 1/2
         :return:
         """
-        node_dist_ij = internalNodesDistance(node_i, node_j)
-        dist_i_ij = (node_dist_ij + node_i.upDistance - node_j.upDistance) / 2
-        dist_j_ij = (node_dist_ij + node_j.upDistance - node_i.upDistance) / 2
+        (weight_i, dist_i_ij), incorr_weight_i = node_i.profile.distance(self.profile)
+        (weight_j, dist_j_ij), incorr_weight_j = node_j.profile.distance(self.profile)
 
         self.upDistance = weight * (node_i.upDistance + dist_i_ij) + (1 - weight) * (node_j.upDistance + dist_j_ij)
 
-    def setVarianceCorrection(self, node_i, node_j, weight=0.5):
+    def setVarianceCorrection(self, node_i, node_j, weight):
         """
-        update the variance correction of node_ij based on node_i and node_j
-        v(ij) = weight*v(i)+(1-weight)*v(j)+weight*(1-weight)*V(i,j)
+        v(ij) = Lamda*v(i)+(1-Lamda)*v(j)+Lamda*(1-Lamda)*V(i,j)
         :param node_i:
         :param node_j:
-        :param weight: if not weighted, default weight is 1/2
+        :param weight:
         :return:
         """
         self.variance_correction = weight * node_i.variance_correction + (
@@ -135,7 +127,7 @@ class TreeNode:
         for i, j in product(range(n_children), range(n_children)):
             (weight, dist), incorr_weight = self.children[i].profile.distance(self.children[j].profile)
             sum += dist
-        self.selfDistance = sum
+        return sum
 
 
     def addDistance(self, node, distance):
@@ -148,27 +140,29 @@ class TreeNode:
                 na : TreeNode = self.children[i]
                 nb : TreeNode = self.children[j]
 
-                distance = src.utils.setJoinsCriterion(self,na,nb)
+                distance = setJoinsCriterion(self,na,nb,len(self.children))
+                # print("typeof(distance)=="+str(type(distance)))
                 na.addDistance(nb,distance)
                 nb.addDistance(na,distance)
 
     def getFirstDistance(self):#TODO Test
         if len(self.distances) > 0:
-            return self.distances[0]
+            return self.distances[0]["distance"]
 
         return 9999999999999999999999999
 
     def generateProfileFromChildren(self):
         p = None
-
-        print("Profile before update == ")
-        print(self.profile.get_frequency_profile())
         for c in self.children:
             if p == None:
                 p = c.getProfile()
             else:
                 p = p.combine(c.getProfile())
         self.profile = p
-        print("Profile before update == ")
-        print(self.profile.get_frequency_profile())
 
+    def hasLowDistanceTo(self, target : TreeNode, limit:float):
+        for d in self.distances:
+            if d["distance"] <= limit and d["Node"] == target:
+                return True
+
+        return False

@@ -2,6 +2,7 @@
 from src.TreeNode import TreeNode
 from src.profile import Profile
 from src.TreeCrawler import TreeCrawler
+from src.visualize import Visualize
 
 def read_atl(file_name):
     with open(file_name) as f:
@@ -22,8 +23,14 @@ if __name__ == "__main__":
         root.addNode(node)
 
     root.generateProfileFromChildren()
-    print(root.profile.get_frequency_profile())
+    # print(root.profile.get_frequency_profile())
     root.calcDistances()
 
     crawler = TreeCrawler(root)
     crawler.startMerging()
+
+    ## ADD NNI STEP
+
+    print(root)
+    vis = Visualize(root)
+    vis.visualize(path="./results/first_tree.png")

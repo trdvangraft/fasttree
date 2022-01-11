@@ -1,9 +1,9 @@
 from src.TreeNode import TreeNode
-import heapq
+from operator import itemgetter
 
 class TreeCrawler:
     #TODO: Test
-    epsilon = 0.0001
+    epsilon = 0.5
 
 
     root = None
@@ -18,21 +18,30 @@ class TreeCrawler:
 
 
     def startMerging(self):
-        shortesDistances = []
+        index = 0
+        shortesDistances = sorted([{"distance": n.getFirstDistance(), "Node":n} for n in self.root.children], key=itemgetter('distance'), reverse=True)
 
-        for n in self.root.children:
-            heapq.heappush(shortesDistances,(n.getFirstDistance(),n))
+        # well our queue is not empty we can update the tree! 
+        while len(self.root.children) > 1:
+            print("index=="+str(index))
+            index += 1
 
-        while len(shortesDistances) > 1:
-            merger = []
-            (d,n) = heapq.heappop(shortesDistances)
-            merger.append(n)
+            print("len(shortestDistances)=="+str(len(shortesDistances)))
 
-            next = heapq.heappop(shortesDistances)
+            cutoff = shortesDistances[0]["distance"] + self.epsilon
+            merger = [shortesDistances[0]["Node"]]
 
-            while d + self.epsilon > next[0]:
-                merger.append(next[1])
-                next = heapq.heappop(shortesDistances)
+            i = 1
+            while i < len(shortesDistances) and cutoff > shortesDistances[i]["distance"]:
+                if shortesDistances[i]["Node"].hasLowDistanceTo(merger[0],cutoff):
+                    merger.append(shortesDistances[i]["Node"])
+                    shortesDistances.remove(shortesDistances[i])
+                # cutoff = merger[-1].getFirstDistance() + self.epsilon
+                i += 1
 
-            nParent = TreeNode.mergeNodes(merger)
-            heapq.heappush(shortesDistances,(nParent.getFirstDistance(),nParent))
+            
+
+            print("len(merger)=="+str(len(merger)))
+            nParent = TreeNode.mergeNodes(merger, self.root)
+            shortesDistances.append({"distance": nParent.getFirstDistance(),"Node":nParent})
+            shortesDistances = sorted(shortesDistances, key=itemgetter('distance'), reverse=True)
