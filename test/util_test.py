@@ -27,7 +27,7 @@ class utilTest(unittest.TestCase):
 
         nab = TreeNode.mergeNodes([na, nb],root)
         (weight_i, dist_i), incorr_weight_i = na.profile.distance(nab.profile)
-        self.assertEqual(1 / 12, dist_i)
+        self.assertEqual(-10/12, dist_i)
 
     def test_update_weight(self):
         root : TreeNode = TreeNode(Profile("A", "root"))
@@ -67,7 +67,7 @@ class utilTest(unittest.TestCase):
         root.children.append(nb)
 
         nab = TreeNode.mergeNodes([na,nb],root)
-        self.assertEqual(-1.5, setJoinsCriterion(nab, na, nb, 1),
+        self.assertEqual(1/6, setJoinsCriterion(nab, na, nb, 1),
                          "Set joins criterion wrong.")
 
     def test_set_out_distance(self):
@@ -84,5 +84,5 @@ class utilTest(unittest.TestCase):
         root.children.append(nb)
 
         nab = TreeNode.mergeNodes([na,nb],root)
-        self.assertEqual(5 / 6, setOutDistance(nab, na, 1), "Set out distance wrong.")
-        self.assertEqual(5 / 6, setOutDistance(nab, nb, 1), "Set out distance wrong.")
+        self.assertEqual(-5/3, setOutDistance(nab, na, 3), "Set out distance wrong.")
+        self.assertEqual(-5/3, setOutDistance(nab, nb, 3), "Set out distance wrong.")
