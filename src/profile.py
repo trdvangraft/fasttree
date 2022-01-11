@@ -4,7 +4,8 @@ from itertools import product
 
 
 class Profile:
-    def __init__(self, dna) -> None:
+    def __init__(self, dna, name) -> None:
+        self.name = name
         self.motifs = dna if type(dna) == list else [dna]
         self.__count_profile = self.__calculate_count_profile()
 
@@ -19,7 +20,8 @@ class Profile:
 
     def combine(self, profile: Profile) -> Profile:
         new_motifs = self.motifs + profile.motifs
-        return Profile(new_motifs)
+        new_name = "_".join([self.name, profile.name])
+        return Profile(new_motifs, new_name)
 
     def distance(self, profile: Profile):
 
@@ -38,6 +40,9 @@ class Profile:
 
     def get_freq(self, i):
         return [self.__count_profile[key][i] for key in self.__count_profile.keys()]
+
+    def get_weights(self):
+        return self.__weight_profile
 
     def __calculate_count_profile(self) -> dict:
         k = len(self.motifs[0])

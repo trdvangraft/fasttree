@@ -1,13 +1,5 @@
-# encoding: utf-8
-"""
-@author: Xinqi
-@contact: lixinqi98@gmail.com
-@file: utils.py
-@time: 12/7/21
-@desc:
-"""
 import logging
-from src.TreeNode import TreeNode
+import src.TreeNode as TreeNode
 
 logging.basicConfig(format='%(asctime)s-10s | %(levelname)-8s | %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
@@ -56,7 +48,7 @@ def internalNodesDistance(node_i: TreeNode, node_j: TreeNode):
     return prof_dist - node_i.upDistance - node_j.upDistance
 
 
-def SetJoinsCriterion(root: TreeNode, node_i: TreeNode, node_j: TreeNode, active_num):
+def setJoinsCriterion(root: TreeNode, node_i: TreeNode, node_j: TreeNode, active_num):
     """
     Neighbor Joining Criterion: d_u(i,j) - r(i) - r(j)
     :param root:
@@ -65,13 +57,13 @@ def SetJoinsCriterion(root: TreeNode, node_i: TreeNode, node_j: TreeNode, active
     :param active_num:
     :return: criterion
     """
-    if node_i.parent is not None or node_i.parent is not None:
-        return
+    #     if node_i.parent is not None or node_i.parent is not None:#TODO: all nodes have a parent except the root, so this check seems strange
+    #         return
     # assert node_i.nOutDistanceActive >= active_num
     # assert node_j.nOutDistanceActive >= active_num
     node_dist = internalNodesDistance(node_i, node_j)
     outdist_i = setOutDistance(root, node_i, active_num)
-    outdist_j = setOutDistance(root, node_i, active_num)
+    outdist_j = setOutDistance(root, node_j, active_num)
     return node_dist - outdist_i - outdist_j
 
 
@@ -101,7 +93,7 @@ def setOutDistance(root: TreeNode, node: TreeNode, active_num):
         # without gaps
         out_dist = active_num * dist - node.selfDistance - (active_num - 2) * node.upDistance - root.upDistance
 
-    node.outDistance = out_dist / (active_num - 2)
+    node.outDistance = (out_dist / (active_num - 2) if active_num > 2 else 0)
     node.nOutDistanceActive = active_num
     return node.outDistance
 

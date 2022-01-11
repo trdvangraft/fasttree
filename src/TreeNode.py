@@ -1,22 +1,16 @@
 from __future__ import annotations
 
-from operator import itemgetter
 from typing import List
-
 from src.profile import Profile
 from operator import itemgetter
+from itertools import product
+from functools import reduce
 from src.utils import *
+
 
 class TreeNode:
 
     m = 5#TODO: should be some global constant(how many distances to keep from each node)
-
-    variance_correction = 0  # variance correction = 0 for leaves
-    upDistance = 0  # updistance = 0 for leaves
-    nOutDistanceActive = -1
-    outDistance = -1
-    selfWeight = None  # sum of proportion of non-gaps in the profile of node i, save for fast use
-    selfDistance = 0  # the average distance between children of node i, save for fast use
 
     def __init__(self, prof):
         # print("made TreeNode")
@@ -26,12 +20,23 @@ class TreeNode:
             return
 
         self.profile = prof
+        self.nodeName = prof.name
+
+        self.children = []
         self.parent = None
-        self.children: List[TreeNode] = []
-        self.distances = [] #tuple of type (distance,connectingNode)
+        self.distances = []
+
+        self.variance_correction = 0  # variance correction = 0 for leaves
+        self.upDistance = 0  # updistance = 0 for leaves
+        self.nOutDistanceActive = -1
+        self.outDistance = -1
+
+        self.selfWeight = self.__setSelfWeight()  # sum of proportion of non-gaps in the profile of node i, save for fast use
+        self.selfDistance = self.__setSelfDistance()  # the average distance between children of node i, save for fast use
 
     def addNode(self, n):
         if (isinstance(n, TreeNode) and not n in self.children):
+            n.parent = self
             self.children.append(n)
         else:
             print("WARNING: tried adding a non-TreeNode to tree")
@@ -40,22 +45,46 @@ class TreeNode:
         if (isinstance(n, TreeNode) and n in self.children):
             self.children.remove(n)
 
-    def mergeNodes(self, n2):
-        if (not isinstance(n2, TreeNode)):
-            print("WARNING: tried merging with a non-TreeNode object type")
-            return
+    @staticmethod
+    def mergeNodes(nodes: List[TreeNode], root: TreeNode):
+        #check if all nodes have the same parent
+        for i in range(len(nodes)):
+            if (x := nodes[i]) and not x.parent.parent == None:
+                print("WARNING: Node that isn't directly under root is found 1")
+                while not x.parent.parent == None:
+                    x = x.parent
+                nodes[i] = x
 
-        # New
-        newNode = TreeNode(self.profile.combine(n2.profile))
-        newNode.distances = sorted(self.distances + n2.distances, key=itemgetter('distance'))[:5]
+        #make new parent node with the original parent
+        nParent = TreeNode(reduce(lambda acc, p: acc.combine(p.profile), nodes[1:], nodes[0].profile))
+        nParent.parent = root
+        root.children.append(nParent)
 
-        # add the merged nodes as children to the new node
-        newNode.addNode(self)
-        newNode.addNode(n2)
+        #set all node parents to the new parent
+        #add all nodes to the new parent
+        for n in nodes:
+            n.parent = nParent
+            nParent.children.append(n)
 
-        return newNode
+        #merge distances
+        nParent.distances = nodes[0].distances
+        for n in nodes[1:]:
+            nParent.distances = sorted(nParent.distances + n.distances, key=itemgetter('distance'))[:n.m]
 
-    def get_profile(self):
+        #TODO: make an test to see if this works
+        #remove nodes from old parent
+        for n in nodes:
+            root.children.remove(n)
+
+        # update the self distance
+        nParent.__setSelfDistance()
+        # TODO: update the covariance correction with weight
+        # weight = updateWeight()
+        # nParent.setVarianceCorrection(nodes[0]. nodes[1])
+
+        return nParent
+
+    def getProfile(self):
         return self.profile#TODO should this be a copy or the actual one?
 
     def setUpDistance(self, node_i, node_j, weight=0.5):
@@ -84,3 +113,56 @@ class TreeNode:
         """
         self.variance_correction = weight * node_i.variance_correction + (
                     1 - weight) * node_j.variance_correction + weight * (1 - weight) * updateVariance(node_i, node_j)
+
+
+    def __setSelfWeight(self):
+        if self.profile:
+            return sum(self.profile.get_weights()) / len(self.profile.get_weights())
+        else:
+            return None
+
+    def __setSelfDistance(self):
+        sum = 0
+        n_children = len(self.children)
+        for i, j in product(range(n_children), range(n_children)):
+            (weight, dist), incorr_weight = self.children[i].profile.distance(self.children[j].profile)
+            sum += dist
+        return sum
+
+
+    def addDistance(self, node, distance):
+        self.distances.append({'distance': distance, 'Node': node})
+        #TODO: keep it space efficient by deleting when it goes over root(N)
+
+    def calcDistances(self):
+        for i in range(len(self.children)):
+            for j in range(i+1,len(self.children)):
+                na : TreeNode = self.children[i]
+                nb : TreeNode = self.children[j]
+
+                distance = setJoinsCriterion(self,na,nb,len(self.children))
+                # print("typeof(distance)=="+str(type(distance)))
+                na.addDistance(nb,distance)
+                nb.addDistance(na,distance)
+
+    def getFirstDistance(self):#TODO Test
+        if len(self.distances) > 0:
+            return self.distances[0]["distance"]
+
+        return 9999999999999999999999999
+
+    def generateProfileFromChildren(self):
+        p = None
+        for c in self.children:
+            if p == None:
+                p = c.getProfile()
+            else:
+                p = p.combine(c.getProfile())
+        self.profile = p
+
+    def hasLowDistanceTo(self, target : TreeNode, limit:float):
+        for d in self.distances:
+            if d["distance"] <= limit and d["Node"] == target:
+                return True
+
+        return False
