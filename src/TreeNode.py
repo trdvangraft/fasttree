@@ -46,7 +46,7 @@ class TreeNode:
             self.children.remove(n)
 
     @staticmethod
-    def mergeNodes(nodes: List[TreeNode], root: TreeNode):
+    def mergeNodes(nodes: List[TreeNode], cutoff : float, root: TreeNode):
         #check if all nodes have the same parent
         for i in range(len(nodes)):
             if (x := nodes[i]) and not x.parent.parent == None:
@@ -54,6 +54,34 @@ class TreeNode:
                 while not x.parent.parent == None:
                     x = x.parent
                 nodes[i] = x
+
+        for i in range(len(nodes)):
+            if nodes[i].parent.parent == None:
+                print("WARNING: Node that isn't directly under root is found 2")
+                while not x.parent.parent == None:
+                    x = x.parent
+                nodes[i] = x
+
+
+        base = [nodes[0], nodes[0].distances[0]["Node"]]
+
+        q=  [node.distances for node in nodes]
+        print(q)
+        t = [item["Node"] for sublist in q for item in sublist]#todo no clue why or how this works
+        print(t)
+        added = [n for n in t if (n.hasLowDistanceTo(base[0],cutoff) or n.hasLowDistanceTo(base[1],cutoff))]
+        print(str(type(nodes)))
+
+
+        print("len(base)=="+str(len(base)))
+        print("len(added)=="+str(len(added)))
+        print("len(nodes)=="+str(len(nodes)))
+        nodes = base + added
+        nodes = list(set(nodes))
+        print("type=="+str(type(base)))
+        print("2e len(nodes)=="+str(len(nodes)))
+
+
 
         #make new parent node with the original parent
         nParent = TreeNode(reduce(lambda acc, p: acc.combine(p.profile), nodes[1:], nodes[0].profile))
@@ -72,9 +100,11 @@ class TreeNode:
             nParent.distances = sorted(nParent.distances + n.distances, key=itemgetter('distance'))[:n.m]
 
         #TODO: make an test to see if this works
-        #remove nodes from old parent
+        #DONT DO IT LIKE THIS
         for n in nodes:
-            root.children.remove(n)
+            if n in root.children:
+                root.children.remove(n)
+
 
         # update the self distance
         nParent.__setSelfDistance()
@@ -162,7 +192,13 @@ class TreeNode:
 
     def hasLowDistanceTo(self, target : TreeNode, limit:float):
         for d in self.distances:
-            if d["distance"] <= limit and d["Node"] == target:
+            if d["distance"] <= limit and d["Node"].getAncestor() == target:
                 return True
 
         return False
+
+    def getAncestor(self):
+        x = self
+        if self.parent.parent == None:
+            x = x.parent.parent
+        return x

@@ -3,7 +3,7 @@ from operator import itemgetter
 
 class TreeCrawler:
     #TODO: Test
-    epsilon = 0.5
+    epsilon = 0.0
 
 
     root = None
@@ -18,8 +18,10 @@ class TreeCrawler:
 
 
     def startMerging(self):
+        sortDirection = False#true for reversed order
+
         index = 0
-        shortesDistances = sorted([{"distance": n.getFirstDistance(), "Node":n} for n in self.root.children], key=itemgetter('distance'), reverse=True)
+        shortesDistances = sorted([{"distance": n.getFirstDistance(), "Node":n} for n in self.root.children], key=itemgetter('distance'), reverse=sortDirection)
 
         # well our queue is not empty we can update the tree! 
         while len(self.root.children) > 1:
@@ -42,6 +44,6 @@ class TreeCrawler:
             
 
             print("len(merger)=="+str(len(merger)))
-            nParent = TreeNode.mergeNodes(merger, self.root)
+            nParent = TreeNode.mergeNodes(merger, cutoff, self.root)
             shortesDistances.append({"distance": nParent.getFirstDistance(),"Node":nParent})
-            shortesDistances = sorted(shortesDistances, key=itemgetter('distance'), reverse=True)
+            shortesDistances = sorted(shortesDistances, key=itemgetter('distance'), reverse=sortDirection)
