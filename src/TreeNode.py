@@ -46,71 +46,77 @@ class TreeNode:
             self.children.remove(n)
 
     @staticmethod
-    def mergeNodes(nodes: List[TreeNode], cutoff : float, root: TreeNode):
-        #check if all nodes have the same parent
-        for i in range(len(nodes)):
-            if (x := nodes[i]) and not x.parent.parent == None:
-                print("WARNING: Node that isn't directly under root is found 1")
-                while not x.parent.parent == None:
-                    x = x.parent
-                nodes[i] = x
+    def mergeNodes(node: TreeNode, root: TreeNode):
+        #get top ancestor of both
+        node : TreeNode = node.getAncestor()
+        print("len(node.distances)=="+str(len(node.distances)))
+        otherNode : TreeNode = node.distances[0]["Node"].getAncestor()
+        node.distances.remove(node.distances[0])
 
-        for i in range(len(nodes)):
-            if nodes[i].parent.parent == None:
-                print("WARNING: Node that isn't directly under root is found 2")
-                while not x.parent.parent == None:
-                    x = x.parent
-                nodes[i] = x
+            #if those are the same -> return it
+        if node == otherNode:
+            return node;
 
-
-        base = [nodes[0], nodes[0].distances[0]["Node"]]
-
-        q=  [node.distances for node in nodes]
-        print(q)
-        t = [item["Node"] for sublist in q for item in sublist]#todo no clue why or how this works
-        print(t)
-        added = [n for n in t if (n.hasLowDistanceTo(base[0],cutoff) or n.hasLowDistanceTo(base[1],cutoff))]
-        print(str(type(nodes)))
-
-
-        print("len(base)=="+str(len(base)))
-        print("len(added)=="+str(len(added)))
-        print("len(nodes)=="+str(len(nodes)))
-        nodes = base + added
-        nodes = list(set(nodes))
-        print("type=="+str(type(base)))
-        print("2e len(nodes)=="+str(len(nodes)))
-
-
-
-        #make new parent node with the original parent
-        nParent = TreeNode(reduce(lambda acc, p: acc.combine(p.profile), nodes[1:], nodes[0].profile))
+        #create profile and set root
+        nParent = TreeNode(node.profile.combine(otherNode.profile))
         nParent.parent = root
-        root.children.append(nParent)
 
-        #set all node parents to the new parent
-        #add all nodes to the new parent
-        for n in nodes:
-            n.parent = nParent
-            nParent.children.append(n)
+        #add both children to new parent
+        nParent.children.append(node)
+        nParent.children.append(otherNode)
 
-        #merge distances
-        nParent.distances = nodes[0].distances
-        for n in nodes[1:]:
-            nParent.distances = sorted(nParent.distances + n.distances, key=itemgetter('distance'))[:n.m]
-
-        #TODO: make an test to see if this works
-        #DONT DO IT LIKE THIS
-        for n in nodes:
-            if n in root.children:
-                root.children.remove(n)
-
-
-        # update the self distance
+        nParent.distances = sorted(node.distances + otherNode.distances, key=itemgetter('distance'))[:node.m]
         nParent.__setSelfDistance()
-        # TODO: update the covariance correction with weight
-        # weight = updateWeight()
-        # nParent.setVarianceCorrection(nodes[0]. nodes[1])
+        nParent.__setSelfWeight()
+
+        # base = [nodes[0], nodes[0].distances[0]["Node"]]
+        #
+        # q=  [node.distances for node in nodes]
+        # print(q)
+        # t = [item["Node"] for sublist in q for item in sublist]#todo no clue why or how this works
+        # print(t)
+        # added = [n for n in t if (n.hasLowDistanceTo(base[0],cutoff) or n.hasLowDistanceTo(base[1],cutoff))]
+        # print(str(type(nodes)))
+        #
+        #
+        # print("len(base)=="+str(len(base)))
+        # print("len(added)=="+str(len(added)))
+        # print("len(nodes)=="+str(len(nodes)))
+        # nodes = base + added
+        # nodes = list(set(nodes))
+        # print("type=="+str(type(base)))
+        # print("2e len(nodes)=="+str(len(nodes)))
+        #
+        #
+        #
+        # #make new parent node with the original parent
+        # nParent = TreeNode(reduce(lambda acc, p: acc.combine(p.profile), nodes[1:], nodes[0].profile))
+        # nParent.parent = root
+        # root.children.append(nParent)
+        #
+        # #set all node parents to the new parent
+        # #add all nodes to the new parent
+        # for n in nodes:
+        #     n.parent = nParent
+        #     nParent.children.append(n)
+        #
+        # #merge distances
+        # nParent.distances = nodes[0].distances
+        # for n in nodes[1:]:
+        #     nParent.distances = sorted(nParent.distances + n.distances, key=itemgetter('distance'))[:n.m]
+        #
+        # #TODO: make an test to see if this works
+        # #DONT DO IT LIKE THIS
+        # for n in nodes:
+        #     if n in root.children:
+        #         root.children.remove(n)
+        #
+        #
+        # # update the self distance
+        # nParent.__setSelfDistance()
+        # # TODO: update the covariance correction with weight
+        # # weight = updateWeight()
+        # # nParent.setVarianceCorrection(nodes[0]. nodes[1])
 
         return nParent
 
@@ -199,6 +205,6 @@ class TreeNode:
 
     def getAncestor(self):
         x = self
-        if self.parent.parent == None:
-            x = x.parent.parent
+        if not x.parent.parent == None:
+            x = x.parent
         return x
