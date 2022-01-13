@@ -46,7 +46,8 @@ def internalNodesDistance(node_i: TreeNode, node_j: TreeNode):
     :return:
     """
     (weight, prof_dist), incorr_weight = node_i.profile.distance(node_j.profile)
-    return prof_dist - node_i.upDistance - node_j.upDistance
+    dist = prof_dist - node_i.upDistance - node_j.upDistance
+    return dist if dist > 0 else prof_dist
 
 
 def setJoinsCriterion(root: TreeNode, node_i: TreeNode, node_j: TreeNode, active_num):
