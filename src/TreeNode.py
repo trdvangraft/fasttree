@@ -52,20 +52,14 @@ class TreeNode:
             node.distances = []
             return node.getAncestor()
 
-        # print("0 node.name=="+node.profile.name)
         nName = node.profile.name
         #get top ancestor of both
         node : TreeNode = node.getAncestor()
         if len(node.distances) == 0:
-            print("no furter distances")
             return node
 
-
-        print("gonna merge " + nName + " and " + node.distances[0]["Node"].profile.name)
-
-        print("len(node.distances)=="+str(len(node.distances)))
         otherNode : TreeNode = node.distances[0]["Node"].getAncestor()
-        # print("0 otherNode.name=="+otherNode.profile.name)
+
         node.distances.remove(node.distances[0])
         otherNode.distances.remove(otherNode.distances[0])
 
@@ -75,15 +69,9 @@ class TreeNode:
         if not otherNode.parent.parent == None:
             print("otherNode not under root")
 
-        # print("node.name=="+node.profile.name)
-        # print("otherNode.name=="+otherNode.profile.name)
-
             #if those are the same -> return it
         if node == otherNode or node.profile.name == otherNode.profile.name:
-            print("merge same node")
             return node
-
-        print("gonna merge " + node.profile.name + " and " + otherNode.profile.name)
 
         #create profile and set root
         nParent = TreeNode(node.profile.combine(otherNode.profile))
@@ -167,7 +155,6 @@ class TreeNode:
                 nb : TreeNode = self.children[j]
 
                 distance = setJoinsCriterion(self,na,nb,len(self.children))
-                # print("typeof(distance)=="+str(type(distance)))
                 na.addDistance(nb,distance)
                 nb.addDistance(na,distance)
 
@@ -201,11 +188,8 @@ class TreeNode:
 
         while x.parent.parent is not None:
             x = x.parent
-            # print("going to ancestor")
 
         return x
 
     def sortDistances(self):
-        # print("numDistances=="+str(len(self.distances)))
         self.distances = sorted(self.distances, key=itemgetter('distance'), reverse=False)[:self.m]
-        # print("numDistances 2=="+str(len(self.distances)))
