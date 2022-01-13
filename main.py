@@ -23,6 +23,8 @@ if __name__ == "__main__":
         root.addNode(node)
 
     root.generateProfileFromChildren()
+    root.upDistance = root.setSelfUpDistanceFromChild()
+    root.selfDistance = root.setSelfDistance()
     # print(root.profile.get_frequency_profile())
     root.calcDistances()
 

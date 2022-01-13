@@ -1,4 +1,5 @@
 import logging
+import random
 import src.TreeNode as TreeNode
 
 logging.basicConfig(format='%(asctime)s-10s | %(levelname)-8s | %(message)s',
@@ -64,7 +65,9 @@ def setJoinsCriterion(root: TreeNode, node_i: TreeNode, node_j: TreeNode, active
     node_dist = internalNodesDistance(node_i, node_j)
     outdist_i = setOutDistance(root, node_i, active_num)
     outdist_j = setOutDistance(root, node_j, active_num)
-    return node_dist - outdist_i - outdist_j
+    criter = node_dist - outdist_i - outdist_j
+    return criter if criter > 0 else random.randint(1,100) / 10000
+    # return criter
 
 
 def setOutDistance(root: TreeNode, node: TreeNode, active_num):
@@ -84,7 +87,7 @@ def setOutDistance(root: TreeNode, node: TreeNode, active_num):
     """
     (weight, dist), incorr_weight = node.profile.distance(root.profile)
     # TODO: check if root.upDistance represent the total up distance
-    if node.selfWeight is not None:
+    if node.selfWeight != 1:
         # with gaps
         delta = (dist * weight * active_num - node.selfWeight * node.selfDistance) / (
                 weight * active_num - node.selfDistance)
@@ -93,6 +96,6 @@ def setOutDistance(root: TreeNode, node: TreeNode, active_num):
         # without gaps
         out_dist = active_num * dist - node.selfDistance - (active_num - 2) * node.upDistance - root.upDistance
 
-    node.outDistance = (out_dist / (active_num - 2) if active_num > 2 else 0)
+    node.outDistance = (out_dist / (active_num - 2) if active_num > 2 or out_dist < 0 else 0)
     node.nOutDistanceActive = active_num
     return node.outDistance
