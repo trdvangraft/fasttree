@@ -11,7 +11,7 @@ def read_atl(file_name):
 
 
 if __name__ == "__main__":
-    sequences = read_atl("data/fasttree-input.aln")
+    sequences = read_atl("data/test-small.aln")
 
     root : TreeNode = TreeNode(Profile("A", "root"))
 

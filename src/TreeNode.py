@@ -166,3 +166,6 @@ class TreeNode:
                 return True
 
         return False
+
+    def isLeafNode(self) -> bool:
+        return len(self.children) == 0

@@ -24,7 +24,6 @@ class Profile:
         return Profile(new_motifs, new_name)
 
     def distance(self, profile: Profile):
-
         number_of_positions = len(self.motifs[0])
 
         denom = sum([self.__weight_profile[i] * profile.__weight_profile[i]
