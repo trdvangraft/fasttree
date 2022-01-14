@@ -150,6 +150,9 @@ class TreeNode:
         #TODO: keep it space efficient by deleting when it goes over root(N)
 
     def calcDistances(self):
+        for node in self.children:
+            node.distances = []
+
         for i in range(len(self.children)):
             for j in range(i+1,len(self.children)):
                 na : TreeNode = self.children[i]
