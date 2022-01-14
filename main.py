@@ -12,7 +12,7 @@ def read_atl(file_name):
 
 
 if __name__ == "__main__":
-    sequences = read_atl("data/test-small.aln")
+    sequences = read_atl("data/fasttree-input.aln")
 
     root : TreeNode = TreeNode(Profile("A", "root"))
 
@@ -24,7 +24,7 @@ if __name__ == "__main__":
         root.addNode(node)
 
     root.generateProfileFromChildren()
-    # print(root.profile.get_frequency_profile())
+    print(root.profile.get_frequency_profile())
     root.calcDistances()
 
     crawler = TreeCrawler(root)

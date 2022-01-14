@@ -22,7 +22,7 @@ class Profile:
 
     def combine(self, profile: Profile) -> Profile:
         new_motifs = self.motifs + profile.motifs
-        new_name = "_".join([self.name, profile.name])
+        new_name = "_".join(["("+self.name+")", "("+profile.name+")"])
         return Profile(new_motifs, new_name)
 
     def distance(self, profile: Profile):
