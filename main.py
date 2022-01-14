@@ -1,4 +1,5 @@
 # from itertools import product
+from src.nni import nni_interchange
 from src.TreeNode import TreeNode
 from src.profile import Profile
 from src.TreeCrawler import TreeCrawler
@@ -30,6 +31,7 @@ if __name__ == "__main__":
     crawler.startMerging()
 
     ## ADD NNI STEP
+    # optimal_tree = nni_interchange(root)
 
     print(root)
     vis = Visualize(root)

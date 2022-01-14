@@ -1,3 +1,4 @@
+from typing import List
 import unittest
 
 from src.profile import Profile
@@ -51,3 +52,17 @@ class ProfileTest(unittest.TestCase):
             "G": [0, 0.5, 0.5, 0],
             "T": [0.5, 0, 0, 0.5]
         }, profile.get_frequency_profile())
+
+    
+    def test_distance_between_profiles_works(self):
+        profile_a, profile_b, profile_c = self.__node_factory(["AAA", "AAA", "TTT"])
+
+        self.assertTrue(profile_a.log_distance(profile_b) < profile_a.log_distance(profile_c))
+        self.assertEqual(profile_a.log_distance(profile_b), 1)
+        self.assertEqual(profile_a.log_distance(profile_c), 1)
+
+    
+
+    def __node_factory(self, dna_strings: List[str]) -> List[Profile]:
+        profiles = [Profile(string, name=string) for string in dna_strings]
+        return profiles

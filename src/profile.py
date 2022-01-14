@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import List
-from itertools import product
+from itertools import product, zip_longest
+
+from src.utils import *
 
 
 class Profile:
@@ -26,11 +28,20 @@ class Profile:
     def distance(self, profile: Profile):
         number_of_positions = len(self.motifs[0])
 
+        distance = sum(
+            [hammingDistance(left_motif, righ_motif) for left_motif, righ_motif in product(self.motifs, profile.motifs)]
+        ) / (len(self.motifs) * len(profile.motifs))
+
         denom = sum([self.__weight_profile[i] * profile.__weight_profile[i]
                     for i in range(number_of_positions)])
-        top = sum([(1 - sum([a * b for a, b in zip(self.get_freq(i), profile.get_freq(i))])) *
-                  (self.__weight_profile[i] * profile.__weight_profile[i]) for i in range(number_of_positions)])
-        return (denom if denom > 0 else 0.01, top/denom if denom > 0 else 1), denom
+        top = sum(
+            [
+                (1 - sum([a * b for a, b in zip(self.get_freq(i), profile.get_freq(i))])) *
+                (self.__weight_profile[i] * profile.__weight_profile[i]) 
+                for i in range(number_of_positions)
+            ]
+        )
+        return (denom if denom > 0 else 0.01, distance), denom
     
     def log_distance(self, profile: Profile):
         # TODO: calculate the log corrected distance, for now return just the distance
