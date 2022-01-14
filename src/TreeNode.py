@@ -61,7 +61,8 @@ class TreeNode:
         otherNode : TreeNode = node.distances[0]["Node"].getAncestor()
 
         node.distances.remove(node.distances[0])
-        otherNode.distances.remove(otherNode.distances[0])
+        if len(otherNode.distances)>0:
+            otherNode.distances.remove(otherNode.distances[0])
 
         if not node.parent.parent == None:
             print("node not under root")
@@ -88,7 +89,7 @@ class TreeNode:
         node.parent=nParent
         otherNode.parent = nParent
 
-        nParent.distances = node.distances + otherNode.distances
+        nParent.distances = node.distances + otherNode.distances#todo: limit number
         nParent.sortDistances()
         nParent.__setSelfDistance()
         nParent.__setSelfWeight()
