@@ -4,91 +4,187 @@ from typing import List, Optional, Tuple
 from src.utils import *
 from src.profile import Profile
 from src.TreeNode import TreeNode
-from src.nni import nni_interchange
+from src.nni import nni_interchange, nni_runner
 
 
 class NniTest(unittest.TestCase):
     def test_original_tree_is_optimal(self):
         # Arrange
-        [node_a, node_b, node_c, node_d], profiles, root = self.__node_factory(["CCC", "CCC", "AAA", "AAA"])
-        root = self.__tree_factory([node_a, node_b], [node_c, node_d], root).parent
+        [node_a, node_b, node_c, node_d], profiles, root = self.__node_factory(["CCC", "CCG", "AAT", "AAA"])
+
+        node_a.addDistance(node_b, 0.0)
+        node_b.addDistance(node_a, 0.0)
+
+        node_c.addDistance(node_d, 0.0)
+        node_d.addDistance(node_c, 0.0)
+
+        TreeNode.mergeNodes(node_a, root)
+        TreeNode.mergeNodes(node_b, root)
+        TreeNode.mergeNodes(node_c, root)
+        TreeNode.mergeNodes(node_d, root)
 
         # Act
-        optimal_tree = nni_interchange(root.children[0])
+        nni_interchange(root)
         
         # Assert
-        self.assertEqual(len(optimal_tree.children), 2)
-        self.assertListEqual(self.__get_motifs(optimal_tree.children[0]), profiles[0].combine(profiles[1]).motifs)
-        self.assertListEqual(self.__get_motifs(optimal_tree.children[1]), profiles[2].combine(profiles[3]).motifs)
+        self.assertEqual(len(root.children), 2)
+        self.assertListEqual(self.__get_motifs(root.children[0]), profiles[0].combine(profiles[1]).motifs)
+        self.assertListEqual(self.__get_motifs(root.children[1]), profiles[2].combine(profiles[3]).motifs)
     
     def test_non_optimal_tree_gets_corrected(self):
         # Arrange
-        [node_a, node_b, node_c, node_d], profiles, root = self.__node_factory(["CCC", "AAA", "CCC", "AAA"])
-        root = self.__tree_factory([node_a, node_b], [node_c, node_d], root).parent
+        [node_a, node_b, node_c, node_d], profiles, root = self.__node_factory(["CCC", "AAT", "CCG", "AAA"])
+        
+        node_a.addDistance(node_b, 0.0)
+        node_b.addDistance(node_a, 0.0)
+
+        node_c.addDistance(node_d, 0.0)
+        node_d.addDistance(node_c, 0.0)
+
+        TreeNode.mergeNodes(node_a, root)
+        TreeNode.mergeNodes(node_b, root)
+        TreeNode.mergeNodes(node_c, root)
+        TreeNode.mergeNodes(node_d, root)
 
         # Act
-        optimal_tree = nni_interchange(root.children[0])
+        nni_interchange(root)
 
         # Assert
-        self.assertListEqual(self.__get_motifs(optimal_tree.children[0]), profiles[0].combine(profiles[2]).motifs)
-        self.assertListEqual(self.__get_motifs(optimal_tree.children[1]), profiles[1].combine(profiles[3]).motifs)
+        self.assertListEqual(self.__get_motifs(root.children[0]), profiles[0].combine(profiles[2]).motifs)
+        self.assertListEqual(self.__get_motifs(root.children[1]), profiles[3].combine(profiles[1]).motifs)
 
     def test_optimal_tree_with_three_nodes(self):
         # Arrange
-        [node_a, node_b, node_c], profiles, root = self.__node_factory(["CCC", "CCC", "AAA"])
-        root = self.__tree_factory([node_a, node_b], node_c, root)
+        [node_a, node_b, node_c], profiles, root = self.__node_factory(["CCC", "CCG", "AAA"])
+
+        node_a.addDistance(node_b, 0.0)
+        node_b.addDistance(node_a, 0.0)
+
+        TreeNode.mergeNodes(node_a, root)
+        TreeNode.mergeNodes(node_b, root)
 
         # Act
-        optimal_tree = nni_interchange(root)
+        nni_interchange(root)
 
         # Assert
-        self.assertListEqual(self.__get_motifs(optimal_tree.children[0]), profiles[0].combine(profiles[1]).motifs)
-        self.assertListEqual(self.__get_motifs(optimal_tree.children[1]), profiles[2].motifs)
+        self.assertListEqual(self.__get_motifs(root.children[1]), profiles[0].combine(profiles[1]).motifs)
+        self.assertListEqual(self.__get_motifs(root.children[0]), profiles[2].motifs)
 
     def test_non_optimal_tree_with_three_nodes(self):
         # Arrange
-        [node_a, node_b, node_c], profiles, root = self.__node_factory(["CCC", "AAA", "CCC"])
-        root = self.__tree_factory([node_a, node_b], node_c, root)
+        [node_a, node_b, node_c], profiles, root = self.__node_factory(["CCC", "AAA", "CCG"])
+
+        node_a.addDistance(node_b, 0.0)
+
+        TreeNode.mergeNodes(node_a, root)
 
         # Act
-        optimal_tree = nni_interchange(root)
+        nni_interchange(root)
 
         # Assert
-        self.assertListEqual(self.__get_motifs(optimal_tree.children[0]), profiles[0].combine(profiles[2]).motifs)
-        self.assertListEqual(self.__get_motifs(optimal_tree.children[1]), profiles[1].motifs)
+        self.assertCountEqual(self.__get_motifs(root.children[0]), profiles[0].combine(profiles[2]).motifs)
+        self.assertCountEqual(self.__get_motifs(root.children[1]), profiles[1].motifs)
 
     def test_complex_non_optimal_tree_with_three_nodes(self):
         # Arrange
         [node_a, node_b, node_c], profiles, root = self.__node_factory(["CCGC", "CCAT", "CCCC"])
-        root = self.__tree_factory([node_a, node_b], node_c, root)
+
+        node_a.addDistance(node_b, 0.0)
+        node_b.addDistance(node_a, 0.0)
+
+        TreeNode.mergeNodes(node_a, root)
+        TreeNode.mergeNodes(node_b, root)
 
         # Act
-        optimal_tree = nni_interchange(root)
+        nni_interchange(root)
 
         # Assert
-        self.assertListEqual(self.__get_motifs(optimal_tree.children[0]), profiles[0].combine(profiles[2]).motifs)
-        self.assertListEqual(self.__get_motifs(optimal_tree.children[1]), profiles[1].motifs)
+        self.assertListEqual(self.__get_motifs(root.children[0]), profiles[0].combine(profiles[2]).motifs)
+        self.assertListEqual(self.__get_motifs(root.children[1]), profiles[1].motifs)
 
-    
-    def test_complex_tree(self):
+    def test_complex_optimal_multi_layer_tree(self):
         # Arrange
-        [node_a, node_b, node_c, node_d, node_e], profiles,  root = self.__node_factory(["CCC", "CCC", "AAA", "AAA", "TTT"])
-        # We need to consider the following valid tree layout:
-        # ((A, (B, C)), D, E)
-        root = self.__tree_factory_list([[node_a, [node_b, node_c]], node_d, node_e], root)
+        dna = ["CCGC", "CCAT", "CCCC", "AAAA", "AAAT", "AATT"]
+        [node_a, node_b, node_c, node_d, node_e, node_f], profiles, root = self.__node_factory(dna)
 
-        # Acct
-        optimal_tree = nni_interchange(root)
+        node_e.addDistance(node_f, 0.0)
+        node_e.addDistance(node_d, 2.0)
+        node_e.addDistance(node_a, 10.0)
+
+        node_a.addDistance(node_c, 0.0)
+        node_a.addDistance(node_b, 2.0)
+
+        TreeNode.mergeNodes(node_a, root)
+        TreeNode.mergeNodes(root.children[-1], root)
+
+        TreeNode.mergeNodes(node_e, root)
+        TreeNode.mergeNodes(root.children[-1], root)
+
+        # root.children[0].addDistance(root.children[1], 0.0)
+        TreeNode.mergeNodes(root.children[1], root)
+
+        # Act
+        nni_runner(root)
 
         # Assert
+        self.assertCountEqual(self.__get_motifs(root.getChild().children[0]), profiles[3].combine(profiles[5].combine(profiles[4])).motifs)
+        self.assertCountEqual(self.__get_motifs(root.getChild().children[1]), profiles[1].combine(profiles[0].combine(profiles[2])).motifs)
 
+    def test_complex_non_optimal_multi_layer_tree_local_switches(self):
+        # Arrange
+        dna = ["CCGC", "CCAT", "CCCC", "AAAA", "AAAT", "AATT"]
+        [node_a, node_b, node_c, node_d, node_e, node_f], profiles, root = self.__node_factory(dna)
 
-        self.assertListEqual(self.__get_motifs(optimal_tree.children[1]), profiles[0].combine(profiles[1]).motifs)
-        self.assertListEqual(self.__get_motifs(optimal_tree.children[0]), profiles[4].combine(profiles[2]).combine(profiles[3]).motifs)
-        
-        left_branch: TreeNode = optimal_tree.children[0]
-        self.assertListEqual(self.__get_motifs(left_branch.children[0]), profiles[4].motifs)
-        self.assertListEqual(self.__get_motifs(left_branch.children[1]), profiles[2].combine(profiles[3]))
+        node_e.addDistance(node_f, 0.0)
+        node_e.addDistance(node_d, 2.0)
+        node_e.addDistance(node_a, 10.0)
+
+        node_a.addDistance(node_c, 0.0)
+        node_a.addDistance(node_b, 2.0)
+
+        TreeNode.mergeNodes(node_a, root)
+        TreeNode.mergeNodes(root.children[-1], root)
+
+        TreeNode.mergeNodes(node_e, root)
+        TreeNode.mergeNodes(root.children[-1], root)
+
+        # root.children[0].addDistance(root.children[1], 0.0)
+        TreeNode.mergeNodes(root.children[1], root)
+
+        # Act
+        nni_runner(root)
+
+        # Assert
+        self.assertCountEqual(self.__get_motifs(root.getChild().children[0]), profiles[3].combine(profiles[5].combine(profiles[4])).motifs)
+        self.assertCountEqual(self.__get_motifs(root.getChild().children[1]), profiles[1].combine(profiles[0].combine(profiles[2])).motifs)
+
+    def test_complex_non_optimal_multi_layer_tree_global_switches(self):
+        # Arrange
+        dna = ["CCGC", "CCAT", "CCCC", "AAAA", "AAAT", "AATT"]
+        [node_a, node_b, node_c, node_d, node_e, node_f], profiles, root = self.__node_factory(dna)
+
+        node_e.addDistance(node_d, 0.0)
+        node_e.addDistance(node_c, 2.0)
+        node_e.addDistance(node_a, 10.0)
+
+        node_a.addDistance(node_b, 0.0)
+        node_a.addDistance(node_f, 2.0)
+
+        TreeNode.mergeNodes(node_a, root)
+        TreeNode.mergeNodes(root.children[-1], root)
+
+        TreeNode.mergeNodes(node_e, root)
+        TreeNode.mergeNodes(root.children[-1], root)
+
+        # root.children[0].addDistance(root.children[1], 0.0)
+        TreeNode.mergeNodes(root.children[1], root)
+
+        # Act
+        nni_runner(root)
+
+        # Assert
+        self.assertCountEqual(self.__get_motifs(root.getChild().children[1]), profiles[3].combine(profiles[5].combine(profiles[4])).motifs)
+        self.assertCountEqual(self.__get_motifs(root.getChild().children[0]), profiles[1].combine(profiles[0].combine(profiles[2])).motifs)
     
     def __node_factory(self, dna_strings: List[str]) -> Tuple[List[TreeNode], List[Profile], TreeNode]:
         profiles = [Profile(string, name=string) for string in dna_strings]
