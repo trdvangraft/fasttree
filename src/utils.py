@@ -1,10 +1,5 @@
-import logging
 import random
 import src.TreeNode as TreeNode
-
-logging.basicConfig(format='%(asctime)s-10s | %(levelname)-8s | %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S',
-                    filename='FastTree.log', level=logging.DEBUG)
 
 
 def updateVariance(node_i: TreeNode, node_j: TreeNode):
@@ -67,8 +62,8 @@ def setJoinsCriterion(root: TreeNode, node_i: TreeNode, node_j: TreeNode, active
     outdist_i = setOutDistance(root, node_i, active_num)
     outdist_j = setOutDistance(root, node_j, active_num)
     criter = node_dist - outdist_i - outdist_j
-    return criter if criter > 0 else random.randint(1,100) / 10000
-    # return criter
+    # return criter if criter > 0 else random.randint(1,100) / 10000
+    return criter
 
 
 def setOutDistance(root: TreeNode, node: TreeNode, active_num):

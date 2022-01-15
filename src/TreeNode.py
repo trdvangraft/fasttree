@@ -101,10 +101,11 @@ class TreeNode:
         otherNode.parent = nParent
 
         nParent.distances = node.distances + otherNode.distances#todo: limit number
+        
+        nParent.selfDistance = nParent.setSelfDistance()
+        nParent.selfWeight = nParent.setSelfWeight()
+        nParent.upDistance = nParent.setSelfUpDistanceFromChild() 
         nParent.sortDistances()
-        nParent.__setSelfDistance()
-        nParent.__setSelfWeight()
-
         node.distances = []
         otherNode.distances = []
 

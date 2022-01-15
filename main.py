@@ -9,6 +9,11 @@ from collections import Counter
 import math
 import time
 import os
+import logging
+
+logging.basicConfig(format='%(asctime)s | %(levelname)-8s | %(message)s',
+                    datefmt='%Y-%m-%d %H:%M', filemode='w',
+                    filename='FastTree.log', level=logging.INFO)
 
 def read_atl(file_name):
     with open(file_name) as f:

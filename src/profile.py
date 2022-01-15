@@ -33,7 +33,6 @@ class Profile:
         distance = sum(
             [hammingDistance(left_motif, righ_motif) for left_motif, righ_motif in product(self.motifs, profile.motifs)]
         ) / (len(self.motifs) * len(profile.motifs) * number_of_positions)
-
         denom = sum([self.__weight_profile[i] * profile.__weight_profile[i]
                     for i in range(number_of_positions)])
         top = sum(
