@@ -27,12 +27,15 @@ class TreeNode:
         self.distances = []
 
         self.variance_correction = 0  # variance correction = 0 for leaves
-        self.upDistance = 0  # updistance = 0 for leaves
+        self.outDistance = 0  # outDistance = 0 for leaves
         self.nOutDistanceActive = -1
-        self.outDistance = -1
+        
+        # update the updistance from child nodes, the average distance of the nodes from its children
+        # leave node's upDistance = 0
+        self.upDistance = self.setSelfUpDistanceFromChild() 
 
-        self.selfWeight = self.__setSelfWeight()  # sum of proportion of non-gaps in the profile of node i, save for fast use
-        self.selfDistance = self.__setSelfDistance()  # the average distance between children of node i, save for fast use
+        self.selfWeight = self.setSelfWeight()  # sum of proportion of non-gaps in the profile of node i, save for fast use
+        self.selfDistance = self.setSelfDistance()  # the average distance between children of node i, save for fast use
 
     def addNode(self, n):
         if (isinstance(n, TreeNode) and not n in self.children):
@@ -131,13 +134,13 @@ class TreeNode:
                     1 - weight) * node_j.variance_correction + weight * (1 - weight) * updateVariance(node_i, node_j)
 
 
-    def __setSelfWeight(self):
+    def setSelfWeight(self):
         if self.profile:
             return sum(self.profile.get_weights()) / len(self.profile.get_weights())
         else:
             return None
 
-    def __setSelfDistance(self):
+    def setSelfDistance(self):
         sum = 0
         n_children = len(self.children)
         for i, j in product(range(n_children), range(n_children)):
@@ -145,6 +148,12 @@ class TreeNode:
             sum += dist
         return sum
 
+    def setSelfUpDistanceFromChild(self):
+        sum = 0
+        for child in self.children:
+            (weight, dist), incorr_weight = child.profile.distance(self.profile)
+            sum += dist
+        return sum
 
     def addDistance(self, node, distance):
         self.distances.append({'distance': distance, 'Node': node})

@@ -22,12 +22,13 @@ class Visualize:
         items = []
         for child in root.children:
             res = ''
-            dist = internalNodesDistance(root, child)
+            
             if len(child.children) > 0:
                 subres = self.tree_to_newick(child)
                 if subres != '':
-                    res += '(' + subres + '):' + "{:.2f}".format(dist)
+                    res += '(' + subres + '):'
             else:
+                dist = internalNodesDistance(root, child)
                 res += child.nodeName + ':' + "{:.2f}".format(dist)
             items.append(res)
         return ','.join(items)

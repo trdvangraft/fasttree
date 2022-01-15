@@ -84,6 +84,8 @@ def runProgram():
 
     #
     root.generateProfileFromChildren()
+    root.upDistance = root.setSelfUpDistanceFromChild()
+    root.selfDistance = root.setSelfDistance()
     # print(root.profile.get_frequency_profile())
     root.calcDistances()
     print("calculated all distances")
