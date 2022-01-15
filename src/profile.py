@@ -1,9 +1,11 @@
 from __future__ import annotations
 from typing import List
-from itertools import product, zip_longest
+from itertools import product
 
 from src.utils import *
 
+def hammingDistance(str1, str2):
+    return sum([0 if a == b else 1 for a, b in zip(str1, str2)])
 
 class Profile:
     def __init__(self, dna, name) -> None:

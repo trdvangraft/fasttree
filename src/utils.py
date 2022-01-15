@@ -97,5 +97,4 @@ def setOutDistance(root: TreeNode, node: TreeNode, active_num):
     node.nOutDistanceActive = active_num
     return node.outDistance
 
-def hammingDistance(str1, str2):
-    return sum([0 if a == b else 1 for a, b in zip(str1, str2)])
+

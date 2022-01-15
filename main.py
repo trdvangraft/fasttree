@@ -1,5 +1,5 @@
 # from itertools import product
-from src.nni import nni_interchange
+from src.nni import nni_interchange, nni_runner
 from src.TreeNode import TreeNode
 from src.profile import Profile
 from src.TreeCrawler import TreeCrawler
@@ -27,12 +27,16 @@ if __name__ == "__main__":
     print(root.profile.get_frequency_profile())
     root.calcDistances()
 
+    print("---- TREECRAWLER ----")
     crawler = TreeCrawler(root)
     crawler.startMerging()
 
-    ## ADD NNI STEP
-    # optimal_tree = nni_interchange(root)
-
-    print(root)
     vis = Visualize(root)
-    vis.visualize(path="./results/first_tree.png")
+    vis.visualize(path="./results/pre_NNI.png")
+
+    ## ADD NNI STEP
+    print("---- NNI RUNNER ----")
+    nni_runner(root)
+
+    vis = Visualize(root)
+    vis.visualize(path="./results/post_NNI.png")

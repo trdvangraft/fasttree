@@ -19,11 +19,11 @@ class TreeNode:
             print("WARNING: prof is not of type Profile")
             return
 
-        self.profile = prof
+        self.profile: Profile = prof
         self.nodeName = prof.name
 
-        self.children = []
-        self.parent = None
+        self.children: List[TreeNode] = []
+        self.parent: TreeNode = None
         self.distances = []
 
         self.variance_correction = 0  # variance correction = 0 for leaves
@@ -44,6 +44,13 @@ class TreeNode:
     def deleteNode(self, n):  # TODO do we ever want this?
         if (isinstance(n, TreeNode) and n in self.children):
             self.children.remove(n)
+            n.parent = None
+            # we update the profile to reflect the current number of children
+            self.profile = self.children[-1].getProfile()
+
+
+    def getChild(self, i: int = 0):
+        return self.children[i]
 
     @staticmethod
     def mergeNodes(node: TreeNode, root: TreeNode):
@@ -145,7 +152,7 @@ class TreeNode:
         return sum
 
 
-    def addDistance(self, node, distance):
+    def addDistance(self, node: TreeNode, distance: float):
         self.distances.append({'distance': distance, 'Node': node})
         #TODO: keep it space efficient by deleting when it goes over root(N)
 
@@ -179,6 +186,7 @@ class TreeNode:
             else:
                 p = p.combine(c.getProfile())
         self.profile = p
+        self.nodeName = p.name
 
     def hasLowDistanceTo(self, target : TreeNode, limit:float):
         for d in self.distances:
@@ -187,9 +195,12 @@ class TreeNode:
 
         return False
 
+    def isTerminalSplitNode(self) -> bool:
+        return all([len(child.children) == 0 for child in self.children])
+
     def isLeafNode(self) -> bool:
         return len(self.children) == 0
-        
+
     def getAncestor(self):
         x = self
 
