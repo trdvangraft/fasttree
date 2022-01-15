@@ -165,4 +165,3 @@ class TreeTest(unittest.TestCase):
 
         npt.assert_array_equal(nMerge.distances, dCorrect)
 
-#TODO add test for mergers between more than 2 nodes

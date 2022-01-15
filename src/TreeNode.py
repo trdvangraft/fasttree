@@ -77,6 +77,7 @@ class TreeNode:
         #create profile and set root
         nParent = TreeNode(node.profile.combine(otherNode.profile))
         nParent.parent = root
+        nParent.m = node.m
 
         root.children.append(nParent)
         root.children.remove(node)
@@ -197,3 +198,14 @@ class TreeNode:
 
     def sortDistances(self):
         self.distances = sorted(self.distances, key=itemgetter('distance'), reverse=False)[:self.m]
+
+    def allChildrenHaveDistances(self):
+        for child in self.children:
+            if not child.hasDistances():
+                return False
+
+        return True
+
+    #returns whether the node has children
+    def hasDistances(self):
+        return len(self.children) > 0

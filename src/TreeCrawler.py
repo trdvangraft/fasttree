@@ -19,14 +19,16 @@ class TreeCrawler:
 
     def startMerging(self):
         sortDirection = False#true for reversed order
-        calcdistannceFreq = 5
+        calcdistannceFreq = self.root.m
 
         index = 0
         shortesDistances = sorted([{"distance": n.getFirstDistance(), "Node":n} for n in self.root.children], key=itemgetter('distance'), reverse=sortDirection)
 
         # well our queue is not empty we can update the tree! 
         while len(shortesDistances) > 1:
-            if index % calcdistannceFreq == 0:
+          
+            #index % calcdistannceFreq  == 0:
+            if not self.root.allChildrenHaveDistances():
                 self.root.calcDistances()
 
             print("index=="+str(index))
