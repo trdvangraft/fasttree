@@ -26,6 +26,7 @@ class TreeCrawler:
 
         # well our queue is not empty we can update the tree! 
         while len(shortesDistances) > 1:
+          
             #index % calcdistannceFreq  == 0:
             if not self.root.allChildrenHaveDistances():
                 self.root.calcDistances()
