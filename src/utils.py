@@ -100,3 +100,5 @@ def setOutDistance(root: TreeNode, node: TreeNode, active_num):
     node.outDistance = (out_dist / (active_num - 2) if active_num > 2 or out_dist < 0 else 0)
     node.nOutDistanceActive = active_num
     return node.outDistance
+
+

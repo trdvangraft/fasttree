@@ -1,4 +1,5 @@
 # from itertools import product
+from src.nni import nni_interchange, nni_runner
 from src.TreeNode import TreeNode
 from src.profile import Profile
 from src.TreeCrawler import TreeCrawler

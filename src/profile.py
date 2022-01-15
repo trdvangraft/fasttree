@@ -1,7 +1,12 @@
 from __future__ import annotations
+import math
 from typing import List
 from itertools import product
 
+from src.utils import *
+
+def hammingDistance(str1, str2):
+    return sum([0 if a == b else 1 for a, b in zip(str1, str2)])
 
 class Profile:
     def __init__(self, dna, name) -> None:
@@ -23,14 +28,27 @@ class Profile:
         return Profile(new_motifs, new_name)
 
     def distance(self, profile: Profile):
-
         number_of_positions = len(self.motifs[0])
+
+        distance = sum(
+            [hammingDistance(left_motif, righ_motif) for left_motif, righ_motif in product(self.motifs, profile.motifs)]
+        ) / (len(self.motifs) * len(profile.motifs) * number_of_positions)
 
         denom = sum([self.__weight_profile[i] * profile.__weight_profile[i]
                     for i in range(number_of_positions)])
-        top = sum([(1 - sum([a * b for a, b in zip(self.get_freq(i), profile.get_freq(i))])) *
-                  (self.__weight_profile[i] * profile.__weight_profile[i]) for i in range(number_of_positions)])
-        return (denom if denom > 0 else 0.01, abs(top/denom) if denom > 0 else 1), denom
+        top = sum(
+            [
+                (1 - sum([a * b for a, b in zip(self.get_freq(i), profile.get_freq(i))])) *
+                (self.__weight_profile[i] * profile.__weight_profile[i]) 
+                for i in range(number_of_positions)
+            ]
+        )
+        return (denom if denom > 0 else 0.01, distance), denom
+    
+    def log_distance(self, profile: Profile):
+        # TODO: calculate the log corrected distance, for now return just the distance
+        (weight, prof_dist), incorr_weight = self.distance(profile)
+        return -.75 * math.log(raw if (raw := 1 - (4/3) * prof_dist) > 0 else 0.01) 
 
     def get_freq(self, i):
         count = [self.__count_profile[key][i] for key in self.__count_profile.keys()]

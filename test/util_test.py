@@ -4,7 +4,7 @@ from src.profile import Profile
 from src.TreeNode import TreeNode
 
 
-class utilTest(unittest.TestCase):
+class UtilTest(unittest.TestCase):
     def test_update_variance1(self):
         profile_a = Profile("ACGTAA", "seqA")
         profile_b = Profile("ACGTAG", "seqB")

@@ -1,5 +1,5 @@
-import profile
 import unittest
+
 import numpy.testing as npt
 from src.profile import Profile
 from src.TreeNode import TreeNode
