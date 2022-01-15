@@ -1,4 +1,5 @@
 from src.TreeNode import TreeNode
+from src.bootstrap import BootStrap
 from operator import itemgetter
 
 class TreeCrawler:
@@ -35,7 +36,9 @@ class TreeCrawler:
             index += 1
 
             #merge shortest distance
-            TreeNode.mergeNodes(shortesDistances[0]["Node"], self.root)
+            newNode = TreeNode.mergeNodes(shortesDistances[0]["Node"], self.root)
+            bootStrap = BootStrap(newNode)
+            print(bootStrap.support_score)
 
             shortesDistances = sorted([{"distance": n.getFirstDistance(), "Node": n} for n in self.root.children],
                                       key=itemgetter('distance'), reverse=sortDirection)

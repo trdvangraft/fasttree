@@ -7,6 +7,7 @@ from operator import itemgetter
 from collections import Counter
 import math
 import time
+import os
 
 def read_atl(file_name):
     with open(file_name) as f:
@@ -56,8 +57,8 @@ def createDataset():
     writeToDataset("E:\Downloads\SARS-CoV-2\\ncbi_dataset\data\\tiny-SARS-CoV-2.txt",sequences)
 
 def runProgram():
-    sequences = read_atl("E:\Downloads\SARS-CoV-2\\ncbi_dataset\data\\tiny-SARS-CoV-2.txt")
-
+    # sequences = read_atl("E:\Downloads\SARS-CoV-2\\ncbi_dataset\data\\tiny-SARS-CoV-2.txt")
+    sequences = read_atl('data/fasttree-input.aln')
     numnodes = 10
 
     root: TreeNode = TreeNode(Profile("A", "root"))
@@ -96,6 +97,9 @@ def runProgram():
     print("time elapsed:" + str(end-start))
 
     vis = Visualize(root)
+    if not os.path.exists('./results'):
+        os.mkdir('./results')
+    
     vis.visualize(path="./results/first_tree.png")
 
 
