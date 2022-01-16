@@ -26,9 +26,9 @@ class Visualize:
             if len(child.children) > 0:
                 subres = self.tree_to_newick(child)
                 if subres != '':
-                    res += '(' + subres + '):' + "{:.2f}".format(dist)
+                    res += '(' + subres + '):' + "{:.4f}".format(dist)
             else:
-                res += child.nodeName + ':' + "{:.2f}".format(dist)
+                res += child.nodeName + ':' + "{:.4f}".format(dist)
             items.append(res)
         return ','.join(items)
 
@@ -40,7 +40,7 @@ class Visualize:
         if self.tree is None:
             self.load_newick_tree()
         print(self.tree)
-        fig = plt.figure(figsize=(10, 20), dpi=100)
+        fig = plt.figure(figsize=(20, 20), dpi=100)
         # alternatively
         # fig.set_size_inches(10, 20)
         axes = fig.add_subplot(1, 1, 1)
