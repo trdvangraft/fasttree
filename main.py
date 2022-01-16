@@ -1,4 +1,5 @@
 # from itertools import product
+from src.nni import nni_interchange, nni_runner
 from src.TreeNode import TreeNode
 from src.profile import Profile
 from src.TreeCrawler import TreeCrawler
@@ -7,6 +8,12 @@ from operator import itemgetter
 from collections import Counter
 import math
 import time
+import os
+import logging
+
+logging.basicConfig(format='%(asctime)s | %(levelname)-8s | %(message)s',
+                    datefmt='%Y-%m-%d %H:%M', filemode='w',
+                    filename='FastTree.log', level=logging.INFO)
 
 def read_atl(file_name):
     with open(file_name) as f:
@@ -56,8 +63,8 @@ def createDataset():
     writeToDataset("E:\Downloads\SARS-CoV-2\\ncbi_dataset\data\\tiny-SARS-CoV-2.txt",sequences)
 
 def runProgram():
-    sequences = read_atl("E:\Downloads\SARS-CoV-2\\ncbi_dataset\data\\tiny-SARS-CoV-2.txt")
-
+    # sequences = read_atl("E:\Downloads\SARS-CoV-2\\ncbi_dataset\data\\tiny-SARS-CoV-2.txt")
+    sequences = read_atl('data/fasttree-input.aln')
     numnodes = 10
 
     root: TreeNode = TreeNode(Profile("A", "root"))
@@ -83,6 +90,8 @@ def runProgram():
 
     #
     root.generateProfileFromChildren()
+    root.upDistance = root.setSelfUpDistanceFromChild()
+    root.selfDistance = root.setSelfDistance()
     # print(root.profile.get_frequency_profile())
     root.calcDistances()
     print("calculated all distances")
@@ -96,6 +105,9 @@ def runProgram():
     print("time elapsed:" + str(end-start))
 
     vis = Visualize(root)
+    if not os.path.exists('./results'):
+        os.mkdir('./results')
+    
     vis.visualize(path="./results/first_tree.png")
 
 

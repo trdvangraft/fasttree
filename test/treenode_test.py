@@ -1,5 +1,5 @@
-import profile
 import unittest
+
 import numpy.testing as npt
 from src.profile import Profile
 from src.TreeNode import TreeNode
@@ -17,14 +17,21 @@ class TreeTest(unittest.TestCase):
         }, treeNode.profile.get_frequency_profile())
 
     def test_simpleMerge(self):
+        root : TreeNode = TreeNode(Profile("A", "root"))
+
         profile_a = Profile("ACGTAA", "seqA")
         profile_b = Profile("ACGTAA", "seqB")
 
 
         na = TreeNode(profile_a)
-        nc = TreeNode(profile_b)
+        nb = TreeNode(profile_b)
 
-        nMerge = TreeNode.mergeNodes([na,nc])
+        na.parent = root
+        nb.parent = root
+        root.children.append(na)
+        root.children.append(nb)
+
+        nMerge = TreeNode.mergeNodes([na,nb], root)
 
         self.assertDictEqual({
             "A": [1, 0, 0, 0, 1, 1],
@@ -34,14 +41,21 @@ class TreeTest(unittest.TestCase):
         }, nMerge.profile.get_frequency_profile())
 
     def test_simpleMerge2(self):
+        root : TreeNode = TreeNode(Profile("A", "root"))
+
         profile_a = Profile("ACGTAA", "seqA")
         profile_b = Profile("ACGCAA", "seqB")
 
 
         na = TreeNode(profile_a)
-        nc = TreeNode(profile_b)
+        nb = TreeNode(profile_b)
 
-        nMerge = TreeNode.mergeNodes([na,nc])
+        na.parent = root
+        nb.parent = root
+        root.children.append(na)
+        root.children.append(nb)
+
+        nMerge = TreeNode.mergeNodes([na,nb], root)
 
         print(nMerge.profile.get_frequency_profile())
         self.assertDictEqual({
@@ -52,11 +66,18 @@ class TreeTest(unittest.TestCase):
         }, nMerge.profile.get_frequency_profile())
 
     def test_mergeDistances1(self):
+        root : TreeNode = TreeNode(Profile("A", "root"))
+
         profile_a = Profile("ACGTAA", "seqA")
         profile_b = Profile("ACGCAA", "seqB")
 
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
+
+        na.parent = root
+        nb.parent = root
+        root.children.append(na)
+        root.children.append(nb)
 
         da = [
             {'distance': 1, 'Node': None},
@@ -85,16 +106,23 @@ class TreeTest(unittest.TestCase):
             {'distance': 5, 'Node': None}
         ]
 
-        nMerge = TreeNode.mergeNodes([na,nb])
+        nMerge = TreeNode.mergeNodes([na,nb], root)
 
         npt.assert_array_equal(nMerge.distances,dCorrect)
 
     def test_mergeDistances2(self):
+        root : TreeNode = TreeNode(Profile("A", "root"))
+
         profile_a = Profile("ACGTAA", "seqA")
         profile_b = Profile("ACGCAA", "seqB")
 
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
+
+        na.parent = root
+        nb.parent = root
+        root.children.append(na)
+        root.children.append(nb)
 
         da = [
             {'distance': 1, 'Node': None},
@@ -123,16 +151,23 @@ class TreeTest(unittest.TestCase):
             {'distance': 5, 'Node': None}
         ]
 
-        nMerge = TreeNode.mergeNodes([na,nb])
+        nMerge = TreeNode.mergeNodes([na,nb], root)
 
         npt.assert_array_equal(nMerge.distances,dCorrect)
 
     def test_mergeDistances3(self):
+        root : TreeNode = TreeNode(Profile("A", "root"))
+
         profile_a = Profile("ACGTAA", "seqA")
         profile_b = Profile("ACGCAA", "seqB")
 
         na = TreeNode(profile_a)
         nb = TreeNode(profile_b)
+
+        na.parent = root
+        nb.parent = root
+        root.children.append(na)
+        root.children.append(nb)
 
         da = [
             {'distance': 3, 'Node': None},
@@ -161,7 +196,7 @@ class TreeTest(unittest.TestCase):
             {'distance': 37, 'Node': None}
         ]
 
-        nMerge = TreeNode.mergeNodes([na,nb])
+        nMerge = TreeNode.mergeNodes([na,nb], root)
 
         npt.assert_array_equal(nMerge.distances, dCorrect)
 

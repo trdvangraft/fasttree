@@ -40,9 +40,13 @@ class Visualize:
         if self.tree is None:
             self.load_newick_tree()
         print(self.tree)
-        Phylo.draw(self.tree, branch_labels=lambda c: c.branch_length, do_show=show)
+        fig = plt.figure(figsize=(10, 20), dpi=100)
+        # alternatively
+        # fig.set_size_inches(10, 20)
+        axes = fig.add_subplot(1, 1, 1)
+        Phylo.draw(self.tree, axes=axes, branch_labels=lambda c: c.branch_length, do_show=show)
         if not show:
-            plt.savefig(path)
+            plt.savefig(path, dpi=100)
 
     def load_newick_tree(self):
         if self.newick_str is None:
