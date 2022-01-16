@@ -14,8 +14,6 @@ class Profile:
         self.motifs = dna if type(dna) == list else [dna]
         self.__count_profile, self.__weight_profile = self.__calculate_count_profile()
 
-
-
     def get_frequency_profile(self) -> dict:
         return {symbol: [count / len(self.motifs) for count in self.__count_profile[symbol]] for symbol in self.__count_profile}
 
@@ -45,9 +43,8 @@ class Profile:
         return (denom if denom > 0 else 0.01, distance), denom
     
     def log_distance(self, profile: Profile):
-        # TODO: calculate the log corrected distance, for now return just the distance
         (weight, prof_dist), incorr_weight = self.distance(profile)
-        return -.75 * math.log(raw if (raw := 1 - (4/3) * prof_dist) > 0 else 0.01) 
+        return -.75 * math.log(raw if (raw := 1 - (4/3) * prof_dist) > 0 else 0.00001) 
 
     def get_freq(self, i):
         count = [self.__count_profile[key][i] for key in self.__count_profile.keys()]

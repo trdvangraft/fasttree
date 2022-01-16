@@ -97,22 +97,6 @@ def __rebuild_tree(nodes: List[TreeNode], node_config: List[int]):
 
 
 def __get_nodes_and_profiles(root: TreeNode) -> Tuple[List[Profile], List[TreeNode], List[int]]:
-    # we implemenent a queue to BFS search the tree for Profiles
-    # queue: Deque[TreeNode] = deque(root.children)
-
-    # profiles: List[Profile] = []
-    # nodes: List[TreeNode] = []
-
-    # while len(queue) > 0 and len(profiles) < 4:
-    #     current_node = queue.popleft()
-
-    #     if current_node.parent.profile.name != root.profile.name or current_node.isLeafNode():
-    #         profiles.append(current_node.getProfile())
-    #         nodes.append(current_node)
-
-    #     for child in current_node.children:
-    #         queue.append(child)
-
     # since we are only expecting binary tree we can just get the children of the root node
     # two scenarios can happen a child is already a leaf node or a child is an internal node
     # if the child is a leaf we add it to the node list else we add the childen of the internal node
