@@ -64,8 +64,11 @@ def createDataset():
 
 def runProgram():
     # sequences = read_atl("E:\Downloads\SARS-CoV-2\\ncbi_dataset\data\\tiny-SARS-CoV-2.txt")
+    if not os.path.exists('./results'):
+        os.mkdir('./results')
+
     sequences = read_atl('data/fasttree-input.aln')
-    numnodes = 10
+    numnodes = len(sequences)
 
     root: TreeNode = TreeNode(Profile("A", "root"))
     root.m = int(math.sqrt(numnodes))
@@ -73,8 +76,6 @@ def runProgram():
     #put nodes in a temporary array so we can limit it
     nodes = []
     for n in sequences:
-        #print(n)
-        # print(sequences[n])
         node = TreeNode(Profile(sequences[n], n))
         node.m = root.m
         nodes.append(node)
@@ -82,13 +83,10 @@ def runProgram():
     print("start timer")
     start = time.time()
 
-
     nodes = nodes[:numnodes]
     for n in nodes:
         root.addNode(n)
 
-
-    #
     root.generateProfileFromChildren()
     root.upDistance = root.setSelfUpDistanceFromChild()
     root.selfDistance = root.setSelfDistance()
@@ -97,35 +95,23 @@ def runProgram():
     print("calculated all distances")
     crawler = TreeCrawler(root)
     crawler.startMerging()
-    #
-    # ## ADD NNI STEP
-    #
-    # print(root)
+    
+    # Save the tree to visualize changes that are made with nni
+    vis = Visualize(root)
+    vis.visualize(path="./results/pre_nni_tree.png")
+    ## ADD NNI STEP
+    nni_runner(root)
+
     end = time.time()
     print("time elapsed:" + str(end-start))
 
     vis = Visualize(root)
-    if not os.path.exists('./results'):
-        os.mkdir('./results')
-    
-    vis.visualize(path="./results/first_tree.png")
+    vis.visualize(path="./results/final_tree.png")
 
 
 if __name__ == "__main__":
     # createDataset()
     runProgram()
     print("done running")
-
-    # sequences = sorted(sequences, key=itemgetter('length'))
-    # occurences = [s["length"] for s in sequences]
-    # counted = []
-    # c = Counter(occurences)
-    # for len in occurences:
-    #     print("len" + str(len) + " appeared " + str(c[len]) +" times")
-    #     counted.append({"lenth": len,"counted":c[len]})
-    #
-    # counted = sorted(counted, key=itemgetter('counted'),reverse=True)
-    # print(counted[0:10])
-    # print(Counter[occurences])
 
 

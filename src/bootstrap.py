@@ -9,7 +9,7 @@ class BootStrap:
     """
     Traverse the tree, use bootstrap to test the reliability of the specific node
     """
-    def __init__(self, node, nums=100):
+    def __init__(self, node, nums=10):
         # init the bootstrap with default value 100
         self.nBootStraps = nums
         self.node = node
