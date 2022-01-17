@@ -1,21 +1,39 @@
 import copy
 import random
+import logging
+from collections import deque
 from src.TreeNode import TreeNode
 from src.profile import Profile
 
 
 class BootStrap:
     """
-    Traverse the tree, use bootstrap to test the reliability of the specific node
+    Traverse the tree, use bootstrap to test the reliability of each node
     """
 
     def __init__(self, node, nums=100):
         # init the bootstrap with default value 100
         self.nBootStraps = nums
-        self.node = node
-        self.support_score = self.splitSupport()
+        self.root = node
+    
+    def bootstrap_runner(self):
+        queue = deque(self.root.getChild().children)
 
-    def splitSupport(self):
+        while len(queue) > 0:
+            current_node: TreeNode = queue.popleft()
+
+            # we cant do an interchange on a leaf node
+            if current_node.isLeafNode():
+                continue
+
+            # perform bootstrap
+            score = self.splitSupport(current_node)
+            logging.info(f"Node {current_node.nodeName} reliability(bootstrap score):    {score}")   
+
+            for child in current_node.children:
+                queue.append(child)
+
+    def splitSupport(self, node):
         """
         Computes support for (A,B),(C,D) compared to that for (A,C),(B,D) and (A,D),(B,C)
         Support1 = Support(AB|CD over AC|BD) = d(A,C)+d(B,D)-d(A,B)-d(C,D)
@@ -23,10 +41,8 @@ class BootStrap:
         count numbers of (support1 > 0 and support2 > 0) in nBootStraps
         :return:
         """
-        if len(self.node.children) < 2:
-            return
 
-        profile_a, profile_b, profile_c, profile_d = self.createProfiles()
+        profile_a, profile_b, profile_c, profile_d = self.createProfiles(node)
 
         nSupport = 0
         a_resample = copy.deepcopy(profile_a)
@@ -71,7 +87,7 @@ class BootStrap:
             resample_sequences.append("".join(re_sequence))
         return resample_sequences
 
-    def createProfiles(self):
+    def createProfiles(self, node):
         """
         Node N with children A, B, parent D and sibling C, grandparent G.
         Find the profiles of children A, B, C, D, where D is another sibling if D is root node
@@ -79,12 +95,12 @@ class BootStrap:
         :return:
         """
         # create the profile of node A, B, C, D
-        profile_a = self.node.children[0].profile
-        profile_b = self.node.children[1].profile
+        profile_a = node.children[0].profile
+        profile_b = node.children[1].profile
 
-        parent = self.node.parent
+        parent = node.parent
         children = [child.nodeName for child in parent.children]
-        node_idx = children.index(self.node.nodeName)
+        node_idx = children.index(node.nodeName)
         # parent is root node
         if parent.parent == None:
             profile_c = parent.children[(node_idx - 1) % len(children)].profile

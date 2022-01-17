@@ -1,10 +1,8 @@
-import logging
 from typing import Deque, List, Tuple
 from collections import deque
 from itertools import combinations
 from src.TreeNode import TreeNode
 from src.profile import Profile
-from src.bootstrap import BootStrap
 
 import numpy as np
 
@@ -35,9 +33,6 @@ def nni_runner(root: TreeNode) -> TreeNode:
 
         # perform nni of the current node
         nni_interchange(current_node)
-        bootStrap = BootStrap(current_node)
-        logging.info(f"Node {current_node.nodeName} reliability(bootstrap score):    {str(bootStrap.support_score)}")   
-
         for child in current_node.children:
             queue.append(child)
         

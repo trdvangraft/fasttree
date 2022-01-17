@@ -4,6 +4,7 @@ from src.TreeNode import TreeNode
 from src.profile import Profile
 from src.TreeCrawler import TreeCrawler
 from src.visualize import Visualize
+from src.bootstrap import BootStrap
 from operator import itemgetter
 from collections import Counter
 import math
@@ -63,7 +64,7 @@ def createDataset():
     sequences = readAlternative("E:\Downloads\SARS-CoV-2\\ncbi_dataset\data\\tiny-SARS-CoV-2.txt")
     writeToDataset("E:\Downloads\SARS-CoV-2\\ncbi_dataset\data\\tiny-SARS-CoV-2.txt",sequences)
 
-def runProgram(input, output_img, output_nwk, numnodes=None):
+def runProgram(input, output_img, output_nwk, nBootstrap=100, numnodes=None):
     # sequences = read_atl("E:\Downloads\SARS-CoV-2\\ncbi_dataset\data\\tiny-SARS-CoV-2.txt")
     if not os.path.exists('./results'):
         os.mkdir('./results')
@@ -106,6 +107,10 @@ def runProgram(input, output_img, output_nwk, numnodes=None):
     ## ADD NNI STEP
     nni_runner(root)
 
+    print("start Local Bootstrap and results saved in FastTree.log...")
+    bootstrap = BootStrap(root, nBootstrap)
+    bootstrap.bootstrap_runner()
+
     end = time.time()
     print("time elapsed:" + str(end-start))
 
@@ -119,10 +124,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=str, default='./data/fasttree-input.aln', help='Input sequences' )
     parser.add_argument("--num", type=int, default=None, help='number of sequences, used for large files')
+    parser.add_argument("--nBootstrap", type=int, default=100, help='bootstrap iterations')
     parser.add_argument("--output_img", type=str, default='./results/fasttree.png', help='path to save the output fasttree image')
     parser.add_argument("--output_nwk", type=str, default='./results/fasttree.nwk', help='path to save the output fasttree file in newick format')
     args = parser.parse_args()
-    runProgram(args.input, args.output_img, args.output_nwk, args.num)
+    runProgram(args.input, args.output_img, args.output_nwk, args.nBootstrap, args.num)
     print("done running")
 
 

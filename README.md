@@ -10,11 +10,13 @@ We have designed the python implementation with easy of use in mind, after runni
 
 The algorithm can be used via by just running 
 ```
-python main.py [-h] [--input INPUT] [--num NUM] [--output_img OUTPUT_IMG] [--output_nwk OUTPUT_NWK]
+python main.py [-h] [--input INPUT] [--num NUM] [--nBootstrap NBOOTSTRAP] [--output_img OUTPUT_IMG] [--output_nwk OUTPUT_NWK]
 options:
   -h, --help            show this help message and exit
   --input INPUT         Input sequences
   --num NUM             number of sequences, used for large files
+  --nBootstrap NBOOTSTRAP
+                        bootstrap iterations
   --output_img OUTPUT_IMG
                         path to save the output fasttree image
   --output_nwk OUTPUT_NWK
