@@ -20,26 +20,22 @@ class TreeCrawler:
 
 
     def startMerging(self):
-        sortDirection = False#true for reversed order
-        calcdistannceFreq = self.root.m
-
         index = 0
-        shortesDistances = sorted([{"distance": n.getFirstDistance(), "Node":n} for n in self.root.children], key=itemgetter('distance'), reverse=sortDirection)
+        shortesDistances = sorted([{"distance": n.getFirstDistance(), "Node":n} for n in self.root.children], key=itemgetter('distance'))
 
         # well our queue is not empty we can update the tree! 
         while len(shortesDistances) > 1:
-          
+            print("at index "+ str(index) +" num of children in root: " + str(len(shortesDistances)))
             #index % calcdistannceFreq  == 0:
             if not self.root.allChildrenHaveDistances():
                 self.root.calcDistances()
 
-            print("index=="+str(index))
             index += 1
 
             #merge shortest distance
             newNode = TreeNode.mergeNodes(shortesDistances[0]["Node"], self.root)
-            bootStrap = BootStrap(newNode)
+            # bootStrap = BootStrap(newNode)
             # logging.info(f"Node {newNode.nodeName} reliability(bootstrap score):    {str(bootStrap.support_score)}")
-            print(f"Node {newNode.nodeName} reliability(bootstrap score):    {str(bootStrap.support_score)}")
-            shortesDistances = sorted([{"distance": n.getFirstDistance(), "Node": n} for n in self.root.children],
-                                      key=itemgetter('distance'), reverse=sortDirection)
+            # print(f"Node {newNode.nodeName} reliability(bootstrap score):    {str(bootStrap.support_score)}")
+
+            shortesDistances = sorted([{"distance": n.getFirstDistance(), "Node": n} for n in self.root.children], key=itemgetter('distance'))

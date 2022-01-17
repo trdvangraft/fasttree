@@ -67,8 +67,8 @@ def runProgram():
     if not os.path.exists('./results'):
         os.mkdir('./results')
 
-    sequences = read_atl('data/fasttree-input.aln')
-    numnodes = len(sequences)
+    sequences = read_atl('data/tiny-SARS-CoV-2.txt')
+    numnodes = 25
 
     root: TreeNode = TreeNode(Profile("A", "root"))
     root.m = int(math.sqrt(numnodes))
@@ -78,7 +78,10 @@ def runProgram():
     for n in sequences:
         node = TreeNode(Profile(sequences[n], n))
         node.m = root.m
-        nodes.append(node)
+        if len(nodes) <= numnodes:
+            nodes.append(node)
+        else:
+            break
 
     print("start timer")
     start = time.time()
@@ -92,7 +95,6 @@ def runProgram():
     root.selfDistance = root.setSelfDistance()
     # print(root.profile.get_frequency_profile())
     root.calcDistances()
-    print("calculated all distances")
     crawler = TreeCrawler(root)
     crawler.startMerging()
     

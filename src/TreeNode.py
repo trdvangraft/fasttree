@@ -183,6 +183,8 @@ class TreeNode:
         for n in self.children:
             n.sortDistances()
 
+        print("calculated all distances")
+
     def getFirstDistance(self):#TODO Test
         if len(self.distances) > 0:
             return self.distances[0]["distance"]
