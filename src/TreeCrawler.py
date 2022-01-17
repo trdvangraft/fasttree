@@ -35,8 +35,9 @@ class TreeCrawler:
             index += 1
 
             # The node with the shortest distance to another node will be merged first
-            TreeNode.mergeNodes(shortesDistances[0]["Node"], self.root)
-
+            newNode = TreeNode.mergeNodes(shortesDistances[0]["Node"], self.root)
+            bootStrap = BootStrap(newNode)
+            logging.info(f"Node {newNode.nodeName} reliability(bootstrap score):    {str(bootStrap.support_score)}")
             # Remake the list of shortest distances
             shortesDistances = sorted([{"distance": n.getFirstDistance(), "Node": n} for n in self.root.children],
                                       key=itemgetter('distance'))

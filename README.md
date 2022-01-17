@@ -6,9 +6,20 @@ It is specically designed to run faster than the standard nearest neighbor algor
 Our implementation of the algorithm is based on the first version of the [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2693737/) that describes it. We tried to stay as close as possible to the original implementation, but had to deviate from the implementation as implementation details were not often clear.
 
 ## **Setup**
-We have designed the python implementation with easy of use in mind, after running the requiremetns file with ```pip install -r requirements.txt``` the algorithm is ready to be used. 
+We have designed the python implementation with easy of use in mind, after running the requiremetns file with ```pip install -r requirements.txt``` the algorithm is ready to be used. The python version should be greater than `3.10`
 
-The algorithm can be used via by just running ```py main.py```
+The algorithm can be used via by just running 
+```
+python main.py [-h] [--input INPUT] [--num NUM] [--output_img OUTPUT_IMG] [--output_nwk OUTPUT_NWK]
+options:
+  -h, --help            show this help message and exit
+  --input INPUT         Input sequences
+  --num NUM             number of sequences, used for large files
+  --output_img OUTPUT_IMG
+                        path to save the output fasttree image
+  --output_nwk OUTPUT_NWK
+                        path to save the output fasttree file in newick format
+```
 
 ## **Datasets**
 A few different datasets are included in this repository, which can be found in the data folder. They considerably differ in length. The visualization at the bottom of the readme is based on the `fasttree-input.aln` file and is proven to be a correct Phylogenetic tree validating this algorithm. 

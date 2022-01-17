@@ -10,6 +10,7 @@ import math
 import time
 import os
 import logging
+import argparse
 
 logging.basicConfig(format='%(asctime)s | %(levelname)-8s | %(message)s',
                     datefmt='%Y-%m-%d %H:%M', filemode='w',
@@ -62,13 +63,14 @@ def createDataset():
     sequences = readAlternative("E:\Downloads\SARS-CoV-2\\ncbi_dataset\data\\tiny-SARS-CoV-2.txt")
     writeToDataset("E:\Downloads\SARS-CoV-2\\ncbi_dataset\data\\tiny-SARS-CoV-2.txt",sequences)
 
-def runProgram():
+def runProgram(input, output_img, output_nwk, numnodes=None):
     # sequences = read_atl("E:\Downloads\SARS-CoV-2\\ncbi_dataset\data\\tiny-SARS-CoV-2.txt")
     if not os.path.exists('./results'):
         os.mkdir('./results')
 
-    sequences = read_atl('data/tiny-SARS-CoV-2.txt')
-    numnodes = 25
+    sequences = read_atl(input)
+    if numnodes is None:
+        numnodes = len(sequences)
 
     root: TreeNode = TreeNode(Profile("A", "root"))
     root.m = int(math.sqrt(numnodes))
@@ -100,7 +102,7 @@ def runProgram():
     
     # Save the tree to visualize changes that are made with nni
     vis = Visualize(root)
-    vis.visualize(path="./results/pre_nni_tree.png")
+    vis.visualize(path='./results/tree_before_nni.png')
     ## ADD NNI STEP
     nni_runner(root)
 
@@ -108,12 +110,19 @@ def runProgram():
     print("time elapsed:" + str(end-start))
 
     vis = Visualize(root)
-    vis.visualize(path="./results/final_tree.png")
+    vis.visualize(path=output_img)
+    vis.save_tree(output_nwk)
 
 
 if __name__ == "__main__":
     # createDataset()
-    runProgram()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input", type=str, default='./data/fasttree-input.aln', help='Input sequences' )
+    parser.add_argument("--num", type=int, default=None, help='number of sequences, used for large files')
+    parser.add_argument("--output_img", type=str, default='./results/fasttree.png', help='path to save the output fasttree image')
+    parser.add_argument("--output_nwk", type=str, default='./results/fasttree.nwk', help='path to save the output fasttree file in newick format')
+    args = parser.parse_args()
+    runProgram(args.input, args.output_img, args.output_nwk, args.num)
     print("done running")
 
 

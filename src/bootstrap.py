@@ -1,6 +1,5 @@
 import copy
 import random
-import logging
 from src.TreeNode import TreeNode
 from src.profile import Profile
 
@@ -9,7 +8,8 @@ class BootStrap:
     """
     Traverse the tree, use bootstrap to test the reliability of the specific node
     """
-    def __init__(self, node, nums=10):
+
+    def __init__(self, node, nums=100):
         # init the bootstrap with default value 100
         self.nBootStraps = nums
         self.node = node
@@ -35,7 +35,7 @@ class BootStrap:
         d_resample = copy.deepcopy(profile_d)
         for i in range(self.nBootStraps):
             # resample_motifs_c = self.resampleColumns(profile_c.motifs)
-            
+
             a_resample.motifs = self.resampleColumns(profile_a.motifs)
 
             b_resample.motifs = self.resampleColumns(profile_b.motifs)
@@ -45,20 +45,15 @@ class BootStrap:
             d_resample.motifs = self.resampleColumns(profile_d.motifs)
 
             support_1 = a_resample.log_distance(c_resample) + b_resample.log_distance(d_resample) - \
-                        a_resample.log_distance(b_resample) - c_resample.log_distance(d_resample)
+                a_resample.log_distance(b_resample) - \
+                c_resample.log_distance(d_resample)
 
             support_2 = a_resample.log_distance(d_resample) + b_resample.log_distance(profile_c) - \
-                        a_resample.log_distance(b_resample) - c_resample.log_distance(d_resample)
+                a_resample.log_distance(b_resample) - \
+                c_resample.log_distance(d_resample)
 
-            # support_1 = a_resample.distance(c_resample)[0][1] + b_resample.distance(d_resample)[0][1] - \
-            #             a_resample.distance(b_resample)[0][1] - profile_c.distance(d_resample)[0][1]
-
-            # support_2 = profile_a.distance(d_resample)[0][1] + b_resample.distance(c_resample)[0][1] - \
-            #             profile_a.distance(b_resample)[0][1] - c_resample.distance(d_resample)[0][1]
-            
-            if support_1 > 0  and support_2 > 0:
+            if support_1 > 0 and support_2 > 0:
                 nSupport += 1
-            logging.info(f"bootstrap iteration {i}, {support_1} - {support_2} - nsupport {nSupport}")
         return nSupport / self.nBootStraps
 
     def resampleColumns(self, sequences):
