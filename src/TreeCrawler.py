@@ -3,39 +3,40 @@ from src.bootstrap import BootStrap
 import logging
 from operator import itemgetter
 
+
 class TreeCrawler:
-    #TODO: Test
     epsilon = 0.0
 
-
     root = None
+
     def __init__(self, root):
         # print("made TreeNode")
 
-        if(not isinstance(root,TreeNode)):
+        if (not isinstance(root, TreeNode)):
             print("WARNING: root is not of type TreeNode")
             return
 
         self.root = root
 
-
     def startMerging(self):
         index = 0
-        shortesDistances = sorted([{"distance": n.getFirstDistance(), "Node":n} for n in self.root.children], key=itemgetter('distance'))
+        # Make a list with the shortest distance of each child-node of root
+        shortesDistances = sorted([{"distance": n.getFirstDistance(), "Node": n} for n in self.root.children],
+                                  key=itemgetter('distance'))
 
-        # well our queue is not empty we can update the tree! 
+        # While the queue is not empty we can merge 2 nodes
         while len(shortesDistances) > 1:
-            print("at index "+ str(index) +" num of children in root: " + str(len(shortesDistances)))
-            #index % calcdistannceFreq  == 0:
+            print("at index " + str(index) + " num of children in root: " + str(len(shortesDistances)))
+
+            # If a node has no more distances stored we recalculate all distances
             if not self.root.allChildrenHaveDistances():
                 self.root.calcDistances()
 
             index += 1
 
-            #merge shortest distance
-            newNode = TreeNode.mergeNodes(shortesDistances[0]["Node"], self.root)
-            # bootStrap = BootStrap(newNode)
-            # logging.info(f"Node {newNode.nodeName} reliability(bootstrap score):    {str(bootStrap.support_score)}")
-            # print(f"Node {newNode.nodeName} reliability(bootstrap score):    {str(bootStrap.support_score)}")
+            # The node with the shortest distance to another node will be merged first
+            TreeNode.mergeNodes(shortesDistances[0]["Node"], self.root)
 
-            shortesDistances = sorted([{"distance": n.getFirstDistance(), "Node": n} for n in self.root.children], key=itemgetter('distance'))
+            # Remake the list of shortest distances
+            shortesDistances = sorted([{"distance": n.getFirstDistance(), "Node": n} for n in self.root.children],
+                                      key=itemgetter('distance'))

@@ -10,10 +10,9 @@ from src.utils import *
 
 class TreeNode:
 
-    m = 35#TODO: should be some global constant(how many distances to keep from each node)
+    m = 35  # 35 by default, but will be overwritten with root(N) where N is the number of sequences
 
     def __init__(self, prof):
-        # print("made TreeNode")
 
         if(not isinstance(prof,Profile)):
             print("WARNING: prof is not of type Profile")
@@ -26,17 +25,18 @@ class TreeNode:
         self.parent: TreeNode = None
         self.distances = []
 
-        self.variance_correction = 0  # variance correction = 0 for leaves
-        self.outDistance = 0  # outDistance = 0 for leaves
+        self.variance_correction = 0  # Variance correction = 0 for leaves
+        self.outDistance = 0  # OutDistance = 0 for leaves
         self.nOutDistanceActive = -1
         
-        # update the updistance from child nodes, the average distance of the nodes from its children
-        # leave node's upDistance = 0
+        # Update the updistance from child nodes, the average distance of the nodes from its children
+        # Leave node's upDistance = 0
         self.upDistance = self.setSelfUpDistanceFromChild() 
 
-        self.selfWeight = self.setSelfWeight()  # sum of proportion of non-gaps in the profile of node i, save for fast use
-        self.selfDistance = self.setSelfDistance()  # the average distance between children of node i, save for fast use
+        self.selfWeight = self.setSelfWeight()  # Sum of proportion of non-gaps in the profile of node i, save for fast use
+        self.selfDistance = self.setSelfDistance()  # The average distance between children of node i, save for fast use
 
+    # Add the node as a child of self
     def addNode(self, n):
         if (isinstance(n, TreeNode) and not n in self.children):
             n.parent = self
@@ -44,47 +44,47 @@ class TreeNode:
         else:
             print("WARNING: tried adding a non-TreeNode to tree")
 
-    def deleteNode(self, n):  # TODO do we ever want this?
+    # Remove the node from the children of self
+    def deleteNode(self, n):
         if (isinstance(n, TreeNode) and n in self.children):
             self.children.remove(n)
             n.parent = None
             # we update the profile to reflect the current number of children
             self.profile = self.children[-1].getProfile()
 
-
+    # Return the i-th child
     def getChild(self, i: int = 0):
         return self.children[i]
 
+    # This method will merge a node with it's closest sibling node
     @staticmethod
     def mergeNodes(node: TreeNode, root: TreeNode):
-
+        # Only nodes directly under the root may merge
+        # Since the rest already had been merged
         if not node.parent.parent == None:
             node.distances = []
             return node.getAncestor()
 
-        nName = node.profile.name
-        #get top ancestor of both
+        # Get top ancestor of both nodes
         node : TreeNode = node.getAncestor()
         if len(node.distances) == 0:
             return node
 
+        # Get the ancestor of the node that we have the shortest distance to
         otherNode : TreeNode = node.distances[0]["Node"].getAncestor()
 
         node.distances.remove(node.distances[0])
         if len(otherNode.distances)>0:
             otherNode.distances.remove(otherNode.distances[0])
 
-        if not node.parent.parent == None:
-            print("node not under root")
-
-        if not otherNode.parent.parent == None:
-            print("otherNode not under root")
-
-            #if those are the same -> return it
+        # Because we don't recalculate distances after each merge
+        # It might be that distances refers to an node in the same subtree
+        # In that case we do nothing and (might) continue merging other nodes
         if node == otherNode or node.profile.name == otherNode.profile.name:
             return node
 
-        #create profile and set root
+        # Create the new parent for node and otherNode
+        # Make it's profile, set the root and correct children of root
         nParent = TreeNode(node.profile.combine(otherNode.profile))
         nParent.parent = root
         nParent.m = node.m
@@ -93,19 +93,25 @@ class TreeNode:
         root.children.remove(node)
         root.children.remove(otherNode)
 
-        #add both children to new parent
+        # Add node and otherNode as children of their new parent
         nParent.children.append(node)
         nParent.children.append(otherNode)
 
         node.parent=nParent
         otherNode.parent = nParent
 
-        nParent.distances = node.distances + otherNode.distances#todo: limit number
-        
+        # Use top-hit heuristics to make a list of distances
+        # Distances is the list of shortest distances of the children
+        # The underlying idea is that if a node is close to A it is also close to (A,B)
+        nParent.distances = node.distances + otherNode.distances
+        nParent.sortDistances()
+
+        # Set distances to speed-up future computations
         nParent.selfDistance = nParent.setSelfDistance()
         nParent.selfWeight = nParent.setSelfWeight()
-        nParent.upDistance = nParent.setSelfUpDistanceFromChild() 
-        nParent.sortDistances()
+        nParent.upDistance = nParent.setSelfUpDistanceFromChild()
+
+        # Empty the child distances as they are no longer needed and save space
         node.distances = []
         otherNode.distances = []
 
@@ -165,12 +171,16 @@ class TreeNode:
 
     def addDistance(self, node: TreeNode, distance: float):
         self.distances.append({'distance': distance, 'Node': node})
-        #TODO: keep it space efficient by deleting when it goes over root(N)
 
+    # Calculate distances to all other nodes
+    # Should only be called on the root
     def calcDistances(self):
+        # Empty distances for each child in case it isn't the first time distances are calculated
         for node in self.children:
             node.distances = []
 
+        # Calculate all distances
+        # Since distances are symmetrical each distance is added to both nodes
         for i in range(len(self.children)):
             for j in range(i+1,len(self.children)):
                 na : TreeNode = self.children[i]
@@ -180,17 +190,21 @@ class TreeNode:
                 na.addDistance(nb,distance)
                 nb.addDistance(na,distance)
 
+        # Sort distances and keep the top m
         for n in self.children:
             n.sortDistances()
 
         print("calculated all distances")
 
-    def getFirstDistance(self):#TODO Test
+    # Get the lowest distance for this node
+    def getFirstDistance(self):
         if len(self.distances) > 0:
             return self.distances[0]["distance"]
 
         return 9999999999999999999999999
 
+    # Generate the profile corresponding to the children
+    # Useful for the root node
     def generateProfileFromChildren(self):
         p = None
         for c in self.children:
@@ -201,19 +215,14 @@ class TreeNode:
         self.profile = p
         self.nodeName = p.name
 
-    def hasLowDistanceTo(self, target : TreeNode, limit:float):
-        for d in self.distances:
-            if d["distance"] <= limit and d["Node"].getAncestor() == target:
-                return True
-
-        return False
-
+    # Return whether this node contains leaf nodes
     def isTerminalSplitNode(self) -> bool:
         return all([len(child.children) == 0 for child in self.children])
 
     def isLeafNode(self) -> bool:
         return len(self.children) == 0
 
+    # Get the highest ancestor that is below the root
     def getAncestor(self):
         x = self
 
@@ -222,9 +231,12 @@ class TreeNode:
 
         return x
 
+    # Sort and limit the distances
     def sortDistances(self):
         self.distances = sorted(self.distances, key=itemgetter('distance'), reverse=False)[:self.m]
 
+    # Only called on the root
+    # Check whether all children have distances
     def allChildrenHaveDistances(self):
         for child in self.children:
             if not child.hasDistances():
