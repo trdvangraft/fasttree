@@ -46,6 +46,9 @@ During the tree rearrange phase of the algorithm for a binary Phylogentic tree, 
 ### **Local bootstrapping**
 Local bootstrapping helps with validating a certain split decision, the split is recalculated N times with differently sampled values, giving and accurate value for the likelihood of a certain split happening.
 
+### Appendix
+Detailed formulas about distance(also including gaps) can be found in `docs/fasttree.md`
+
 ## **Results**
 The final Phylogentic tree that was calculated on the sample dataset with our implementation is given below, it shows the branch distance from each internal node (a common ancestor) to a leaf. Note that the circular tree generation is not actually implemented in the code but can easily be achieved while using the newick format, which is generated in the results forled.
 ![Final phylogentic tree](./images/final_tree.svg)
